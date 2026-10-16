@@ -578,3 +578,5 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .device.anim .widget{background:rgba(70,70,76,.8)}
 .device.anim .screen{will-change:transform,opacity}
 .screen{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* 통화 중에도 알림이 통화 화면 위에 보이도록 */
+.device.in-call .banner{z-index:60}

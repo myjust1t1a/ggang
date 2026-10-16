@@ -393,6 +393,7 @@
   }
   /* 알림을 눌렀을 때: 카톡 앱 → 해당 대화방으로 바로 이동 */
   function openKakaoRoom(name) {
+    if (callEl) return;   // 통화 중에는 알림만 닫힘
     const K = P.kakao;
     const top = stack[stack.length - 1];
     if (!(kakaoList && top === kakaoList.el) && !(top && top.dataset.room)) show(kakaoApp(), "push");
