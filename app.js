@@ -925,15 +925,13 @@
     let at = o.start ?? 1100;
     for (const l of lines) {
       if (l.cut) {
-        // 말하는 도중 끊기: 한 글자씩 나오다가 마지막 글자에서 바로 통화 종료 (대사는 그대로 남음)
-        const chars = [...l.text], step = l.typeMs || 85;
+        // 말하는 도중 끊기: 대사를 띄운 뒤 cutAfter(기본 1초) 만에 바로 통화 종료 (대사는 그대로 남음)
         timers.push(setTimeout(() => {
-          lineEl.innerHTML = `${label(l)}<span data-typed></span>`;
+          lineEl.innerHTML = `${label(l)}${esc(l.text)}`;
           lineEl.classList.toggle("me", l.who === "me");
           lineEl.classList.add("show");
         }, at));
-        chars.forEach((ch, i) => timers.push(setTimeout(() => { const t = lineEl.querySelector("[data-typed]"); if (t) t.textContent += ch; }, at + 60 + i * step)));
-        timers.push(setTimeout(() => onEnd(true), at + 60 + chars.length * step + 120));
+        timers.push(setTimeout(() => onEnd(true), at + (l.cutAfter || 1000)));
         return;
       }
       timers.push(setTimeout(() => {
