@@ -62,11 +62,11 @@ window.PHONE = {
       { who: "me", text: "용건 없으시면 끊겠습니다." },
       { text: "농담이에요, 농담. 나중에 얼굴 보고 식사나 한번 해요." }
     ] },
-    "강수일": { lines: [
+    "어머니": { lines: [
       { who: "me", text: "아까 전화 못 받아서요. 무슨 일 있으셨어요?" },
-      { text: "아, 별일 아니었어. 그냥 생각나서 걸어 본 거야." },
+      { text: "별일 아니었어. 그냥 생각나서 걸어본거야." },
       { who: "me", text: "그래요?" },
-      { text: "응. 바쁠 텐데 들어가 봐." },
+      { text: "응. 바쁠 텐데 들어가 봐. 밥 잘 챙겨 먹고." },
       { who: "me", text: "네. 다음에 또 연락드릴게요." }
     ] },
     "한결일보 오지현 기자": { lines: [
@@ -118,7 +118,7 @@ window.PHONE = {
     notes: "", mail: "", weather: "",
     phone: "", chrome: "", messages: "", kakao: ""
   },          // 휴대폰 속 오늘 날짜 (캘린더 아이콘·캘린더 앱 기준)
-  badges: { phone: 7, mail: 2, messages: 3, kakao: 12 },
+  badges: { phone: 8, mail: 2, messages: 3, kakao: 12 },
 
   /* 프로필 사진 (비우면 기본 아이콘) */
   avatars: {
@@ -135,7 +135,7 @@ window.PHONE = {
     { name: "오양훈 사무장님", kind: "휴대전화", dir: "in", when: "10:05" },
     { name: "강민재", count: 2, kind: "휴대전화", dir: "in", when: "09:30" },
     { name: "070-0000-4821", kind: "<스팸의심>", dir: "in", missed: true, when: "09:02" },
-    { name: "강수일", kind: "휴대전화", dir: "out", when: "08:45" },
+    { name: "어머니", kind: "휴대전화", dir: "in", missed: true, when: "08:45" },
     { name: "오양훈 사무장님", count: 3, kind: "휴대전화", dir: "out", when: "08:20" },
     { name: "강민재", kind: "휴대전화", dir: "in", when: "08:02" },
     { name: "한결일보 오지현 기자", count: 3, kind: "휴대전화", dir: "in", missed: true, when: "01:10" },
@@ -147,7 +147,7 @@ window.PHONE = {
     { name: "02-0000-1937", kind: "<스팸의심>", dir: "in", missed: true, when: "어제" },
     { name: "강민재", count: 3, kind: "휴대전화", dir: "in", when: "금요일" },
     { name: "오양훈 사무장님", kind: "휴대전화", dir: "out", when: "금요일" },
-    { name: "강수일", kind: "휴대전화", dir: "in", when: "목요일" },
+    { name: "어머니", kind: "휴대전화", dir: "in", when: "목요일" },
     { name: "강민재", kind: "휴대전화", dir: "out", when: "목요일" },
     { name: "오양훈 사무장님", count: 2, kind: "휴대전화", dir: "in", when: "수요일" },
     { name: "+1 (000) 555-0142", kind: "<스팸의심>", dir: "in", missed: true, when: "수요일" },
