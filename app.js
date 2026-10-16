@@ -421,6 +421,17 @@
       if (c) K.chats.splice(K.chats.indexOf(c), 1); else c = { name };
       Object.assign(c, { preview: text, when: P.time, unread: 0 }); K.chats.unshift(c);
       if (kakaoList && kakaoList.el.isConnected) { const list = kakaoList.el.querySelector("[data-list]"); list.querySelector(`[data-room="${CSS.escape(name)}"]`)?.remove(); list.prepend(h(kakaoList.row(c))); }
+      // 자동 답장
+      const norm = t => t.replace(/[\s.!?~…]+/g, "");
+      const rule = ((K.autoReplies || {})[name] || []).find(r => r.match.some(m => norm(m) === norm(text)));
+      if (rule) {
+        let wait = 1400;
+        setTimeout(() => {   // 읽음 표시(1) 없애기
+          msgs.forEach(m => { if (m.me) delete m.unread; });
+          el.querySelectorAll(".kline.me .kmeta i").forEach(x => x.remove());
+        }, 900);
+        rule.replies.forEach(r => { setTimeout(() => deliverKakao(name, r), wait); wait += 1300; });
+      }
     });
     return el;
   }
