@@ -326,39 +326,66 @@
       show(kakaoRoom(name, K.rooms[name]), "push");
     });
     kakaoList = { el, row };
-    // 앱을 열고 조금 뒤 알림 도착 (여러 개면 차례대로)
-    const N = K.notification;
-    const queue = N && N.from ? (N.messages || [{ text: N.text, delay: N.delay }]) : [];
-    if (queue.length && !kakaoNotified) {
-      kakaoNotified = true;
-      let i = 0;
-      const deliver = () => {
-        if (!stack.includes(el)) { if (i === 0) kakaoNotified = false; return; }
-        const msg = queue[i++];
-        showBanner({ app: N.app, from: N.from, text: msg.text });
-        const room = (K.rooms[N.from] = K.rooms[N.from] || []);
-        const todayLabel = `${TODAY.getFullYear()}년 ${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일`;
-        const lastDate = [...room].reverse().find(m => m.date);
-        const needDate = !lastDate || lastDate.date !== todayLabel;
-        if (needDate) room.push({ date: todayLabel });
-        room.push({ text: msg.text, time: P.time });
-        let c = K.chats.find(x => x.name === N.from);
-        if (c) K.chats.splice(K.chats.indexOf(c), 1); else c = { name: N.from };
-        const open = stack[stack.length - 1], viewing = open && open.dataset.room === N.from;
-        Object.assign(c, { preview: msg.text, when: P.time, unread: viewing ? 0 : (c.unread || 0) + 1 });
-        K.chats.unshift(c);
-        if (!viewing) { P.badges.kakao++; updKakaoBadges(); }
-        const list = el.querySelector("[data-list]");
-        list.querySelector(`[data-room="${CSS.escape(N.from)}"]`)?.remove();
-        list.prepend(h(row(c, "new")));
-        if (viewing) { open.querySelector(".kmsgs").insertAdjacentHTML("beforeend", `${needDate ? `<div class="date">${todayLabel}</div>` : ""}<div class="kline them"><div class="kb">${esc(msg.text)}</div><div class="kmeta"><span>${esc(P.time)}</span></div></div>`); const sc = open.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight; }
-        if (i < queue.length) setTimeout(deliver, queue[i].delay || 3000);
-      };
-      setTimeout(deliver, queue[0].delay || 2000);
-    }
     return el;
   }
   let kakaoList = null;
+  /* 카톡 한 통 도착: 데이터·목록·대화방·배지·알림 반영 */
+  function deliverKakao(from, text) {
+    const K = P.kakao;
+    const room = (K.rooms[from] = K.rooms[from] || []);
+    const todayLabel = `${TODAY.getFullYear()}년 ${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일`;
+    const lastDate = [...room].reverse().find(m => m.date);
+    const needDate = !lastDate || lastDate.date !== todayLabel;
+    if (needDate) room.push({ date: todayLabel });
+    room.push({ text, time: P.time });
+    let c = K.chats.find(x => x.name === from);
+    if (c) K.chats.splice(K.chats.indexOf(c), 1); else c = { name: from };
+    const top = stack[stack.length - 1], viewing = top && top.dataset.room === from;
+    Object.assign(c, { preview: text, when: P.time, unread: viewing ? 0 : (c.unread || 0) + 1 });
+    K.chats.unshift(c);
+    if (!viewing) { P.badges.kakao++; updKakaoBadges(); }
+    if (kakaoList && kakaoList.el.isConnected) {
+      const list = kakaoList.el.querySelector("[data-list]");
+      list.querySelector(`[data-room="${CSS.escape(from)}"]`)?.remove();
+      list.prepend(h(kakaoList.row(c, "new")));
+    }
+    if (viewing) {
+      top.querySelector(".kmsgs").insertAdjacentHTML("beforeend", `${needDate ? `<div class="date">${todayLabel}</div>` : ""}<div class="kline them"><div class="kb">${esc(text)}</div><div class="kmeta"><span>${esc(P.time)}</span></div></div>`);
+      const sc = top.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight;
+    } else {
+      showBanner({ app: "카카오톡", from, text, onTap: () => openKakaoRoom(from) });
+    }
+  }
+  /* 알림을 눌렀을 때: 카톡 앱 → 해당 대화방으로 바로 이동 */
+  function openKakaoRoom(name) {
+    const K = P.kakao;
+    const top = stack[stack.length - 1];
+    if (!(kakaoList && top === kakaoList.el) && !(top && top.dataset.room)) show(kakaoApp(), "push");
+    const c = K.chats.find(x => x.name === name);
+    if (c && c.unread) {
+      P.badges.kakao -= c.unread; c.unread = 0; updKakaoBadges();
+      kakaoList.el.querySelector(`[data-room="${CSS.escape(name)}"] .meta em`)?.remove();
+    }
+    show(kakaoRoom(name, (K.rooms[name] = K.rooms[name] || [])), "push");
+  }
+  /* 강민재 카톡 등 예약 알림: 캘린더 알림이 꺼지고 나서 시작 */
+  let kakaoQueueStarted = false;
+  function startKakaoQueue() {
+    const N = P.kakao.notification;
+    if (kakaoQueueStarted || !N || !N.from) return;
+    kakaoQueueStarted = true;
+    const queue = N.messages || [{ text: N.text, delay: N.delay }];
+    let i = 0;
+    const next = () => {
+      if (i >= queue.length) return;
+      setTimeout(function fire() {
+        if (!layer.classList.contains("open")) { setTimeout(fire, 1000); return; }   // 휴대폰이 닫혀 있으면 열릴 때까지 대기
+        deliverKakao(N.from, queue[i++].text);
+        next();
+      }, queue[i].delay || 2000);
+    };
+    next();
+  }
   function updKakaoBadges() {
     document.querySelectorAll('[data-badge="kakao"],[data-kbadge]').forEach(b => { b.textContent = P.badges.kakao; b.style.display = P.badges.kakao > 0 ? "" : "none"; });
   }
@@ -394,13 +421,20 @@
   }
   const banner = $("#banner"); let bannerTimer;
   function showBanner(N) {
+    if (bannerCur && bannerCur !== N && bannerCur.onHide) { const prev = bannerCur; bannerCur = null; prev.onHide(); }
+    bannerCur = N;
     banner.innerHTML = `<div class="bi${N.kind === "calendar" ? " cal" : ""}">${N.kind === "calendar" ? I.calendar : ""}</div><div class="bt"><small>${esc(N.app)}</small><b>${esc(N.from)}</b>${esc(N.text)}</div><time>지금</time>`;
     banner.hidden = false;
     requestAnimationFrame(() => requestAnimationFrame(() => banner.classList.add("show")));
     clearTimeout(bannerTimer); bannerTimer = setTimeout(hideBanner, N.duration || 5000);
   }
-  function hideBanner() { banner.classList.remove("show"); }
-  banner.onclick = hideBanner;
+  let bannerCur = null;
+  function hideBanner() {
+    banner.classList.remove("show");
+    const cur = bannerCur; bannerCur = null;
+    if (cur && cur.onHide) cur.onHide();
+  }
+  banner.onclick = () => { const cur = bannerCur; hideBanner(); if (cur && cur.onTap) cur.onTap(); };
 
   /* ================= 메모 ================= */
   function notesApp() {
@@ -748,7 +782,7 @@
 
 
   /* ================= 흐르는 시계 · 캘린더 알림 ================= */
-  const START_SEC = (() => { const [hh, mm] = (P.time || "11:58").split(":").map(Number); return hh * 3600 + mm * 60; })();
+  const START_SEC = (() => { const [hh, mm, ss] = (P.time || "11:59:30").split(":").map(Number); P.time = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`; return hh * 3600 + mm * 60 + (ss || 0); })();
   let clockStart = null, audioCtx = null;
   const alerted = new Set();
   const phoneSec = () => START_SEC + (clockStart ? Math.floor((Date.now() - clockStart) / 1000) : 0);
@@ -783,7 +817,7 @@
         alerted.add(id);
         const [eh, em] = e.start.split(":").map(Number);
         const when = `${eh < 12 ? "오전" : "오후"} ${eh % 12 === 0 ? 12 : eh % 12}:${String(em).padStart(2, "0")}`;
-        showBanner({ kind: "calendar", app: "캘린더", from: e.title, text: `오늘 ${when}${e.place ? " · " + e.place : ""}`, duration: 9000 });
+        showBanner({ kind: "calendar", app: "캘린더", from: e.title, text: `오늘 ${when}${e.place ? " · " + e.place : ""}`, duration: 9000, onHide: startKakaoQueue });
         chime();
       }
     });
