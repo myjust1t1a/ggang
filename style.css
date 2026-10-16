@@ -568,3 +568,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @keyframes dialblink{50%{opacity:.45}}
 .cu-liveview .cu-grid{margin-top:182px}
 .cu-line{top:214px;font-size:21px;line-height:1.45;left:28px;right:28px}
+/* 알림 배너: 상태바(시간·와이파이·배터리) 아래에 뜨도록 */
+.banner{top:54px;transform:translateY(calc(-100% - 70px))}
+.banner.show{transform:none}
