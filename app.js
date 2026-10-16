@@ -332,6 +332,7 @@
   /* 카톡 한 통 도착: 데이터·목록·대화방·배지·알림 반영 */
   function deliverKakao(from, text) {
     const K = P.kakao;
+    msgTone();
     const room = (K.rooms[from] = K.rooms[from] || []);
     const todayLabel = `${TODAY.getFullYear()}년 ${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일`;
     const lastDate = [...room].reverse().find(m => m.date);
@@ -799,6 +800,80 @@
     } catch (e) {}
     try { navigator.vibrate && navigator.vibrate([250, 120, 250]); } catch (e) {}
   }
+  /* 메시지 알림음 (짧은 '띠링') + 짧은 진동 */
+  function msgTone() {
+    try {
+      if (audioCtx) {
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        [[1568, 0], [2093, .11]].forEach(([f, t]) => {
+          const o = audioCtx.createOscillator(), g = audioCtx.createGain(), at = audioCtx.currentTime + t;
+          o.type = "triangle"; o.frequency.value = f;
+          g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.22, at + .01); g.gain.exponentialRampToValueAtTime(.001, at + .28);
+          o.connect(g).connect(audioCtx.destination); o.start(at); o.stop(at + .3);
+        });
+      }
+    } catch (e) {}
+    try { navigator.vibrate && navigator.vibrate([90, 60, 90]); } catch (e) {}
+  }
+
+  /* ================= 걸려오는 전화 ================= */
+  let callFired = false, callEl = null, ringTimer = null, callTimer = null;
+  function ringOnce() {
+    try {
+      if (audioCtx) {
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        [659.3, 784, 987.8, 784, 659.3, 784, 987.8, 1318.5].forEach((f, i) => {
+          const o = audioCtx.createOscillator(), g = audioCtx.createGain(), at = audioCtx.currentTime + i * .16;
+          o.type = "sine"; o.frequency.value = f;
+          g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.2, at + .015); g.gain.exponentialRampToValueAtTime(.001, at + .3);
+          o.connect(g).connect(audioCtx.destination); o.start(at); o.stop(at + .32);
+        });
+      }
+    } catch (e) {}
+    try { navigator.vibrate && navigator.vibrate([700, 300, 700]); } catch (e) {}
+  }
+  function stopRing() { clearInterval(ringTimer); ringTimer = null; try { navigator.vibrate && navigator.vibrate(0); } catch (e) {} }
+  function logCall(name, missed) {
+    const last = P.calls[0];
+    if (last && last.name === name && !!last.missed === !!missed && last.dir === "in" && last.when === P.time) last.count = (last.count || 1) + 1;
+    else P.calls.unshift({ name, kind: "휴대전화", dir: "in", missed: !!missed, when: P.time });
+    if (missed) { P.badges.phone = (P.badges.phone || 0) + 1; document.querySelectorAll('[data-badge="phone"]').forEach(b => b.textContent = P.badges.phone); }
+  }
+  function incomingCall() {
+    const C = P.incomingCall || {};
+    const name = C.from || "강민재";
+    hideBanner();
+    callEl = h(`<div class="callui">
+      <div class="cu-top">${av(name, "cu-av")}<div class="cu-name">${esc(name)}</div><div class="cu-sub" data-csub>휴대전화</div></div>
+      <div class="cu-ring">
+        <div class="cu-small"><span><i>⏰</i>리마인더</span><span><i>💬</i>메시지</span></div>
+        <div class="cu-actions"><button class="cu-btn red" data-decline><svg viewBox="0 0 24 24"><path d="M3 15.5c5-4.6 13-4.6 18 0l-2.3 2.6c-.5.5-1.3.6-1.9.2l-2-1.5c-.4-.3-.6-.8-.6-1.3v-1.7c-2.1-.6-4.3-.6-6.4 0v1.7c0 .5-.2 1-.6 1.3l-2 1.5c-.6.4-1.4.3-1.9-.2z" fill="#fff"/></svg><span>거절</span></button><button class="cu-btn green" data-answer><svg viewBox="0 0 24 24"><path d="M6.6 3.4c.8-.5 1.8-.3 2.3.5l1.7 2.7c.5.8.3 1.7-.4 2.3l-1.3 1c.9 2.2 2.6 4.1 4.8 5.2l1-1.2c.6-.7 1.6-.8 2.3-.3l2.6 1.8c.8.5.9 1.6.4 2.4l-.9 1.2c-.9 1.2-2.5 1.6-3.9 1.1C10.4 18.6 6.1 14.3 4.3 9.3c-.5-1.4-.1-3 1.1-3.9z" fill="#fff"/></svg><span>응답</span></button></div>
+      </div>
+      <div class="cu-live">
+        <div class="cu-grid">${[["🔇", "소리 끔"], ["⌗", "키패드"], ["🔊", "스피커"], ["＋", "통화 추가"], ["📹", "FaceTime"], ["👤", "연락처"]].map(([i, l]) => `<span class="cu-key"><i>${i}</i><small>${l}</small></span>`).join("")}</div>
+        <button class="cu-btn red end" data-end><svg viewBox="0 0 24 24"><path d="M3 15.5c5-4.6 13-4.6 18 0l-2.3 2.6c-.5.5-1.3.6-1.9.2l-2-1.5c-.4-.3-.6-.8-.6-1.3v-1.7c-2.1-.6-4.3-.6-6.4 0v1.7c0 .5-.2 1-.6 1.3l-2 1.5c-.6.4-1.4.3-1.9-.2z" fill="#fff"/></svg></button>
+      </div>
+    </div>`);
+    $("#device").appendChild(callEl);
+    requestAnimationFrame(() => requestAnimationFrame(() => callEl.classList.add("in")));
+    ringOnce(); ringTimer = setInterval(ringOnce, 2600);
+    const missTimer = setTimeout(() => { if (callEl && !callEl.classList.contains("live")) { stopRing(); logCall(name, true); closeCall(); } }, (C.ringSeconds || 30) * 1000);
+    callEl.querySelector("[data-decline]").onclick = () => { clearTimeout(missTimer); stopRing(); logCall(name, true); closeCall(); };
+    callEl.querySelector("[data-answer]").onclick = () => {
+      clearTimeout(missTimer); stopRing();
+      callEl.classList.add("live");
+      const sub = callEl.querySelector("[data-csub]"), t0 = Date.now();
+      const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); sub.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
+      draw(); callTimer = setInterval(draw, 1000);
+      callEl.querySelector("[data-end]").onclick = () => { clearInterval(callTimer); logCall(name, false); sub.textContent = "통화 종료"; setTimeout(closeCall, 700); };
+    };
+  }
+  function closeCall() {
+    if (!callEl) return;
+    const el = callEl; callEl = null;
+    el.classList.remove("in"); setTimeout(() => el.remove(), 400);
+  }
+
   function tick() {
     const t = phoneSec(), hh = Math.floor(t / 3600) % 24, mm = Math.floor(t / 60) % 60, ss = t % 60;
     const str = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
@@ -811,6 +886,8 @@
     // 오늘 일정 중 alert: true 인 것이 시작 시각이 되면 알림
     if (lockEl) lockEl.querySelector("[data-ltime]").textContent = (() => { const [a, b] = P.time.split(":"); return `${+a > 12 ? +a - 12 : +a}:${b}`; })();
     if (!layer.classList.contains("open") || locked) return;
+    const C = P.incomingCall;
+    if (C && C.from && !callFired && clockStart && t - START_SEC >= (C.afterMinutes ?? 5) * 60) { callFired = true; incomingCall(); }
     const today = P.today;
     ((P.calendar && P.calendar.events) || []).forEach(e => {
       const id = e.date + e.start + e.title;
@@ -907,6 +984,7 @@
     else syncHistory(n + 1);
   }
   function hidePhone() {
+    if (callEl) { const live = callEl.classList.contains("live"); stopRing(); clearInterval(callTimer); callEl.remove(); callEl = null; logCall((P.incomingCall || {}).from || "강민재", !live); }
     stack.forEach(sc => sc._cleanup && sc._cleanup());
     layer.classList.remove("open"); layer.setAttribute("aria-hidden", "true");
     document.body.style.overflow = ""; hideBanner();

@@ -22,6 +22,8 @@ window.STORY = {
 window.PHONE = {
   time: "11:59:30",            // 휴대폰을 처음 연 순간의 시각(시:분:초). 이후 실제 시간만큼 흘러가요
   passcode: "1201",            // 잠금화면 암호 (4자리)
+  /* 잠금 해제 후 휴대폰 속 시간이 afterMinutes분 흐르면 걸려오는 전화 (받아도 소리는 나지 않아요) */
+  incomingCall: { from: "강민재", afterMinutes: 5, ringSeconds: 30 },
   today: "2026-10-18",
   /* 앱 아이콘을 직접 고른 이미지로 바꾸기
      img 폴더에 이미지(정사각형 png/jpg 권장)를 넣고 "img/파일명.png" 로 적으세요.

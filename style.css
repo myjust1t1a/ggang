@@ -522,3 +522,28 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .device.is-locked .sb-time{visibility:hidden}
 .device.is-locked .statusbar{color:#fff}
 .device.is-locked .homebar i{background:#fff}
+
+/* 걸려오는 전화 */
+.callui{position:absolute;inset:0;z-index:50;color:#fff;background:linear-gradient(180deg,#5b6170 0%,#2f333c 55%,#1c1e24 100%);display:flex;flex-direction:column;align-items:center;transform:translateY(-100%);transition:transform .4s cubic-bezier(.2,.9,.25,1)}
+.callui.in{transform:none}
+.cu-top{display:flex;flex-direction:column;align-items:center;padding-top:96px;gap:6px}
+.cu-top .cu-av{width:84px;height:84px;margin-bottom:8px}
+.cu-name{font-size:32px;font-weight:500}
+.cu-sub{font-size:17px;opacity:.75;font-variant-numeric:tabular-nums}
+.cu-ring,.cu-live{position:absolute;left:0;right:0;bottom:70px;display:flex;flex-direction:column;align-items:center}
+.cu-live{display:none;bottom:60px}
+.callui.live .cu-ring{display:none}
+.callui.live .cu-live{display:flex}
+.cu-small{display:flex;justify-content:space-between;width:300px;font-size:13px;margin-bottom:44px}
+.cu-small span{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.9}
+.cu-small i{font-style:normal;font-size:20px}
+.cu-actions{display:flex;justify-content:space-between;width:300px}
+.cu-btn{display:flex;flex-direction:column;align-items:center;gap:8px;color:#fff;font-size:14px}
+.cu-btn svg{width:74px;height:74px;border-radius:50%;padding:20px;box-sizing:border-box}
+.cu-btn.red svg{background:#ff3b30}
+.cu-btn.green svg{background:#34c759;animation:ringpulse 1.2s ease-in-out infinite}
+@keyframes ringpulse{50%{transform:scale(1.08)}}
+.cu-grid{display:grid;grid-template-columns:repeat(3,80px);gap:24px 34px;margin-bottom:56px}
+.cu-key{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cu-key i{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:28px}
+.cu-key small{font-size:13px}
