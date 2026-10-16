@@ -914,13 +914,13 @@
       const endCall = () => { timers.forEach(clearTimeout); clearInterval(callTimer); lineEl.classList.remove("show"); logCall(name, false); tEl.textContent = "통화 종료"; setTimeout(closeCall, 900); };
       callEl.querySelector("[data-end]").onclick = endCall;
       // 상대방 대사: 차례대로 보여주고 마지막 대사가 사라진 뒤 전화가 끊김
-      runLines(C.lines || [], lineEl, timers, { start: C.lineStart, hangUp: C.hangUpAfter, name }, endCall);
+      runLines(C.lines || [], lineEl, timers, { start: C.lineStart, hangUp: C.hangUpAfter, name, showWho: true }, endCall);
     }
   }
   /* 통화 대사 재생: start(ms) 뒤 첫 대사 → 각 대사 ms 동안 표시 → 마지막 대사가 사라지고 hangUp(ms) 뒤 onEnd */
   function runLines(lines, lineEl, timers, o, onEnd) {
     if (!lines.length) return;
-    const showWho = lines.some(l => l.who === "me");
+    const showWho = o.showWho ?? lines.some(l => l.who === "me");
     let at = o.start ?? 1100;
     lines.forEach(l => {
       timers.push(setTimeout(() => {
