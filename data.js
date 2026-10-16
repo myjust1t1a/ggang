@@ -204,7 +204,7 @@ window.PHONE = {
   kakao: {
     ad: { label: "광고", title: "2027 민사소송 실무 개정판 사전예약", sub: "로앤북스 · 예약 시 10% 할인 + 무료배송", icon: "book" },
     chats: [
-      { name: "장태식", preview: "고양이 전단지 값 언제 줄거냐니까요.", when: "23:02", unread: 3 },
+      { name: "장태식", preview: "아 실수", when: "23:02", unread: 3 },
       { name: "조봉준", preview: "차변 방송 언제 나와줄 거야?", when: "22:15", unread: 1 },
       { name: "새벽경제 김도윤 기자", preview: "카톡 확인하시면 회신 부탁드립니다.", when: "21:40", unread: 3 },
       { name: "데일리저널 송하린 기자", preview: "편하실 때 연락 주세요!", when: "20:05", unread: 2 },
@@ -214,7 +214,13 @@ window.PHONE = {
       { name: "카카오톡 선물하기", preview: "가을 시즌 선물 기획전 최대 40% 할인 🎁", when: "10월 16일", unread: 1, channel: true }
     ],
     /* 카카오톡을 열고 조금 뒤 위에서 내려오는 알림 (비우면 안 뜸) */
-    notification: { app: "카카오톡", from: "강민재", text: "변호사님 저희 오늘 회식해요", delay: 2000 },
+    notification: {
+      app: "카카오톡", from: "강민재",
+      messages: [
+        { text: "변호사님! 저희 오늘 회식이요 ㅎㅎ 형님들 다 모인다고 했어요.", delay: 2000 },  // 앱 열고 2초 뒤
+        { text: "꼭 오셔야해요 빼기 없음!! 😤", delay: 3500 }                                  // 그로부터 3.5초 뒤
+      ]
+    },
     rooms: {
       "장태식": [
         { date: "2026년 10월 6일 화요일" },
@@ -233,7 +239,10 @@ window.PHONE = {
         { text: "변호사님", time: "22:40" },
         { text: "차변", time: "22:41" },
         { deleted: true, time: "22:55" },
-        { text: "고양이 전단지 값 언제 줄거냐니까요.", time: "23:02" }
+        { text: "고양이 전단지", time: "23:01" },
+        { text: "전단지 값 언제줄거냐고요", time: "23:01" },
+        { text: "가ㅂㅅ", time: "23:02" },
+        { text: "아 실수", time: "23:02" }
       ],
       "조봉준": [
         { date: "2026년 10월 2일 금요일" },
@@ -258,9 +267,9 @@ window.PHONE = {
       ],
       "국정원": [
         { date: "2026년 10월 9일 금요일" },
-        { me: true, text: "부탁드릴 게 하나 있습니다.", time: "10:12" },
+        { me: true, text: "부탁할 거 하나 있어.", time: "10:12" },
         { text: "또 뭔데요", time: "10:30" },
-        { me: true, text: "메일로 보냈습니다. 다음 주까지 부탁드립니다.", time: "10:31" },
+        { me: true, text: "메일로 보냈어. 다음 주까지.", time: "10:31" },
         { text: "ㅇㅋ", time: "10:58" },
         { date: "2026년 10월 18일 일요일" },
         { text: "지난번에 맡긴거 다 했어요.", time: "18:30" }

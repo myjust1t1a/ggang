@@ -288,32 +288,35 @@
       const msgs = K.rooms[name] || [{ text: c ? c.preview : "", time: c?.when }];
       show(kakaoRoom(name, msgs), "push");
     });
-    // 앱을 열고 조금 뒤 알림 도착
+    // 앱을 열고 조금 뒤 알림 도착 (여러 개면 차례대로)
     const N = K.notification;
-    if (N && N.from && !kakaoNotified) {
+    const queue = N && N.from ? (N.messages || [{ text: N.text, delay: N.delay }]) : [];
+    if (queue.length && !kakaoNotified) {
       kakaoNotified = true;
-      setTimeout(() => {
-        const inKakao = stack.some(sc => sc === el);
-        if (!inKakao) { kakaoNotified = false; return; }
-        showBanner(N);
-        // 대화방·목록·배지 반영
+      let i = 0;
+      const deliver = () => {
+        if (!stack.includes(el)) { if (i === 0) kakaoNotified = false; return; }
+        const msg = queue[i++];
+        showBanner({ app: N.app, from: N.from, text: msg.text });
         const room = (K.rooms[N.from] = K.rooms[N.from] || []);
         const todayLabel = `${TODAY.getFullYear()}년 ${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일`;
         const lastDate = [...room].reverse().find(m => m.date);
         const needDate = !lastDate || lastDate.date !== todayLabel;
         if (needDate) room.push({ date: todayLabel });
-        room.push({ text: N.text, time: P.time });
+        room.push({ text: msg.text, time: P.time });
         let c = K.chats.find(x => x.name === N.from);
         if (c) K.chats.splice(K.chats.indexOf(c), 1); else c = { name: N.from };
-        Object.assign(c, { preview: N.text, when: P.time, unread: (c.unread || 0) + 1 });
+        const open = stack[stack.length - 1], viewing = open && open.dataset.room === N.from;
+        Object.assign(c, { preview: msg.text, when: P.time, unread: viewing ? 0 : (c.unread || 0) + 1 });
         K.chats.unshift(c);
-        P.badges.kakao++; updKakaoBadges();
+        if (!viewing) { P.badges.kakao++; updKakaoBadges(); }
         const list = el.querySelector("[data-list]");
         list.querySelector(`[data-room="${CSS.escape(N.from)}"]`)?.remove();
         list.prepend(h(row(c, "new")));
-        const open = stack[stack.length - 1];
-        if (open && open.dataset.room === N.from) { open.querySelector(".kmsgs").insertAdjacentHTML("beforeend", `${needDate ? `<div class="date">${todayLabel}</div>` : ""}<div class="kline them"><div class="kb">${esc(N.text)}</div><div class="kmeta"><span>${esc(P.time)}</span></div></div>`); const sc = open.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight; }
-      }, N.delay || 2000);
+        if (viewing) { open.querySelector(".kmsgs").insertAdjacentHTML("beforeend", `${needDate ? `<div class="date">${todayLabel}</div>` : ""}<div class="kline them"><div class="kb">${esc(msg.text)}</div><div class="kmeta"><span>${esc(P.time)}</span></div></div>`); const sc = open.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight; }
+        if (i < queue.length) setTimeout(deliver, queue[i].delay || 3000);
+      };
+      setTimeout(deliver, queue[0].delay || 2000);
     }
     return el;
   }
