@@ -324,7 +324,7 @@
     const body = msgs.map(m => {
       if (m.date) return `<div class="date">${esc(m.date)}</div>`;
       const side = m.me ? "me" : "them";
-      const inner = m.img !== undefined ? photoBox(m, side) : `<div class="kb">${esc(m.text)}</div>`;
+      const inner = m.deleted ? `<div class="kb kdel">ⓘ 삭제된 메시지입니다.</div>` : m.img !== undefined ? photoBox(m, side) : `<div class="kb">${esc(m.text)}</div>`;
       const meta = (m.time || m.unread) ? `<div class="kmeta">${m.unread ? `<i>${m.unread}</i>` : ""}<span>${esc(m.time || "")}</span></div>` : "";
       return `<div class="kline ${side}">${inner}${meta}</div>`;
     }).join("");

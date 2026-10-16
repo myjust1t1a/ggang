@@ -453,3 +453,5 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .av.kch span{color:#3c1e1e;font-weight:800;font-size:20px}
 .kk-ad .kbook{width:34px;height:46px;border-radius:2px 5px 5px 2px;background:linear-gradient(90deg,#5a1f1f 0 5px,#8b2d2d 5px);position:relative;box-shadow:2px 2px 0 #ddd}
 .kk-ad .kbook:after{content:"";position:absolute;left:10px;right:5px;top:9px;height:3px;background:#e6c770;box-shadow:0 6px 0 #e6c770}
+
+.kb.kdel{color:#8e8e93;font-size:14px}
