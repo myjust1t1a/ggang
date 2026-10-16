@@ -23,9 +23,9 @@
     clock: (() => { const [hh, mm] = (P.time || "10:10").split(":").map(Number); const ha = ((hh % 12) + mm / 60) * 30, ma = mm * 6;
       return `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/>${[...Array(60)].map((_, i) => i % 15 === 0 ? "" : `<line x1="30" y1="5" x2="30" y2="${i % 5 ? 7.5 : 9.5}" stroke="${i % 5 ? "#9a9a9e" : "#3a3a3c"}" stroke-width="${i % 5 ? .6 : 1.4}" transform="rotate(${i * 6} 30 30)"/>`).join("")}<g font-size="9" font-weight="600" fill="#3a3a3c" text-anchor="middle"><text x="30" y="14">12</text><text x="49" y="33.2">3</text><text x="30" y="52.5">6</text><text x="11" y="33.2">9</text></g><line x1="30" y1="30" x2="30" y2="17" stroke="#111" stroke-width="2.8" stroke-linecap="round" transform="rotate(${ha} 30 30)"/><line x1="30" y1="30" x2="30" y2="10.5" stroke="#111" stroke-width="2.2" stroke-linecap="round" transform="rotate(${ma} 30 30)"/><g class="ic-sec"><line x1="30" y1="35" x2="30" y2="8.5" stroke="#f5a623" stroke-width="1"/></g><circle cx="30" cy="30" r="2" fill="#111"/><circle cx="30" cy="30" r="1" fill="#f5a623"/></svg>`; })(),
     notes: `<svg viewBox="0 0 60 60"><defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdf5e"/><stop offset="1" stop-color="#f7c843"/></linearGradient><linearGradient id="nb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f1f1f3"/></linearGradient></defs><rect width="60" height="60" fill="url(#nb)"/><rect width="60" height="20" fill="url(#nt)"/>${[...Array(15)].map((_, i) => `<circle cx="${4 + i * 3.7}" cy="23" r=".7" fill="#c7c7cc"/>`).join("")}<line x1="11" y1="34" x2="49" y2="34" stroke="#c7c7cc" stroke-width="1.6" stroke-linecap="round"/><line x1="11" y1="46" x2="49" y2="46" stroke="#c7c7cc" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    insta: `<svg viewBox="0 0 60 60"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff4f7b"/><stop offset="1" stop-color="#8f5cff"/></linearGradient></defs><rect width="60" height="60" fill="url(#ig)"/><path d="M30 44s-13-8-13-17a7 7 0 0 1 13-3.5A7 7 0 0 1 43 27c0 9-13 17-13 17z" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/></svg>`,
+    mail: `<svg viewBox="0 0 60 60"><defs><linearGradient id="ml" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e90ff"/><stop offset="1" stop-color="#0a5fd8"/></linearGradient></defs><rect width="60" height="60" fill="url(#ml)"/><rect x="11" y="18" width="38" height="25" rx="3.5" fill="#fff"/><path d="M12 20l18 13 18-13" fill="none" stroke="#9cc3f5" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
     translate: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#f1f3f7"/><rect x="8" y="10" width="28" height="30" rx="4" fill="#4a86f0"/><text x="22" y="32" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">가</text><rect x="25" y="22" width="27" height="28" rx="4" fill="#fff" stroke="#c9d3e6"/><text x="38.5" y="42" text-anchor="middle" font-size="15" fill="#555">文</text></svg>`,
-    netflix: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#111"/><path d="M24 17l18 13-18 13z" fill="#e50914"/></svg>`,
+    weather: `<svg viewBox="0 0 60 60"><defs><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b8de8"/><stop offset="1" stop-color="#7fc3f7"/></linearGradient></defs><rect width="60" height="60" fill="url(#wt)"/><circle cx="24" cy="24" r="9" fill="#ffd34d"/><path d="M22 44h20a7 7 0 0 0 0-14 9 9 0 0 0-17-1 6.5 6.5 0 0 0-3 15z" fill="#fff"/></svg>`,
     phone: `<svg viewBox="0 0 60 60"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ef06b"/><stop offset="1" stop-color="#1fc23b"/></linearGradient></defs><rect width="60" height="60" fill="url(#pg)"/><path d="M21.5 14.5c1.4-.9 3.1-.5 4 .9l3 4.7c.8 1.3.5 3-.7 3.9l-2.2 1.7c1.5 3.8 4.6 7.2 8.4 9l1.8-2.1c1-1.1 2.7-1.4 3.9-.5l4.5 3.2c1.3 1 1.6 2.8.6 4.1l-1.6 2.1c-1.6 2-4.3 2.8-6.8 2C25.9 42.1 18.5 34.6 15.4 26c-.9-2.4-.2-5.1 1.8-6.8z" fill="#fff"/></svg>`,
     chrome: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/><circle cx="30" cy="30" r="21" fill="none" stroke="#1a73e8" stroke-width="3"/><ellipse cx="30" cy="30" rx="9" ry="21" fill="none" stroke="#1a73e8" stroke-width="2.4"/><path d="M10 30h40M13 20h34M13 40h34" stroke="#1a73e8" stroke-width="2.4"/></svg>`,
     messages: `<svg viewBox="0 0 60 60"><defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ef06b"/><stop offset="1" stop-color="#1fc23b"/></linearGradient></defs><rect width="60" height="60" fill="url(#mg)"/><path d="M30 13c-10.5 0-19 6.9-19 15.5 0 5 2.9 9.4 7.4 12.2-.4 2.4-1.7 4.6-3.6 6.2 3.6.2 7.1-1 9.6-3.2 1.8.4 3.6.6 5.6.6 10.5 0 19-6.9 19-15.5S40.5 13 30 13z" fill="#fff"/></svg>`,
@@ -118,9 +118,21 @@
 
   /* ================= 홈 화면 ================= */
   const apps = [
-    ["calendar", "캘린더"], ["photos", "사진"], ["camera", "카메라"], ["clock", "시계"],
-    ["notes", "메모"], ["insta", "Instagram"], ["translate", "Google 번역"], ["netflix", "Netflix"]
+    ["mail", "메일"], ["calendar", "캘린더"], ["clock", "시계"], ["weather", "날씨"],
+    ["notes", "메모"], ["photos", "사진"], ["camera", "카메라"], ["translate", "Google 번역"]
   ];
+  /* 홈 화면 위젯: 오늘 날짜 + 다음 일정 2개 */
+  function nextEvents(n) {
+    const evs = ((P.calendar && P.calendar.events) || []).filter(e => e.start).map(e => ({ ...e, d: parseD(e.date) }));
+    const now = TODAY.getTime(), t = P.time || "00:00";
+    return evs.filter(e => e.d.getTime() > now || (e.d.getTime() === now && e.start > t))
+      .sort((a, b) => a.d - b.d || a.start.localeCompare(b.start)).slice(0, n);
+  }
+  function widgetHTML() {
+    const list = nextEvents(2);
+    const col = c => ((P.calendar && P.calendar.calendars) || {})[c] || "#8e8e93";
+    return `<button class="widget" data-app="calendar"><div class="wg-date"><small>${WD[TODAY.getDay()]}요일</small><b>${TODAY.getDate()}</b><span>${TODAY.getMonth() + 1}월</span></div><div class="wg-list">${list.length ? list.map(e => `<div class="wg-ev"><i style="background:${col(e.cal)}"></i><div><b>${esc(e.title)}</b><small>${e.d.getMonth() + 1}/${e.d.getDate()} (${WD[e.d.getDay()]}) ${esc(e.start)}${e.place ? " · " + esc(e.place) : ""}</small></div></div>`).join("") : `<div class="wg-none">다가오는 일정 없음</div>`}</div></button>`;
+  }
   const dock = [["phone", "전화"], ["chrome", "Chrome"], ["messages", "메시지"], ["kakao", "카카오톡"]];
   const appBtn = ([id, label]) => {
     const b = P.badges[id];
@@ -129,7 +141,7 @@
   function homeScreen() {
     const el = h(`<section class="screen home" data-dark="1">
       <button class="back-to-book" data-close>‹ 본문으로</button>
-      <div class="grid">${apps.map(appBtn).join("")}</div>
+      <div class="grid">${widgetHTML()}${apps.map(appBtn).join("")}</div>
       <div class="spot"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>검색</div>
       <div class="dock">${dock.map(appBtn).join("")}</div>
     </section>`);
@@ -150,7 +162,7 @@
       <div class="scroll">
         <div class="bigtitle">최근 통화</div>
         <div class="searchfield">${ic.search}<span>검색</span><span class="mic">${ic.mic}</span></div>
-        ${P.calls.map(c => `<div class="call">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}${c.note ? ` · ${esc(c.note)}` : ""}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></div>`).join("")}
+        ${P.calls.map(c => `<div class="call">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></div>`).join("")}
         <div style="height:20px"></div>
       </div>
       <nav class="tabbar">

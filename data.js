@@ -27,10 +27,10 @@ window.PHONE = {
      비워두면("") 기본 아이콘. 캘린더·시계를 이미지로 바꾸면 날짜·시곗바늘은 움직이지 않아요. */
   icons: {
     calendar: "", photos: "", camera: "", clock: "",
-    notes: "", insta: "", translate: "", netflix: "",
+    notes: "", mail: "", translate: "", weather: "",
     phone: "", chrome: "", messages: "", kakao: ""
   },          // 휴대폰 속 오늘 날짜 (캘린더 아이콘·캘린더 앱 기준)
-  badges: { phone: 7, safari: 0, messages: 3, kakao: 12 },
+  badges: { phone: 7, mail: 128, messages: 3, kakao: 12 },
 
   /* 프로필 사진 (비우면 기본 아이콘) */
   avatars: {
@@ -40,9 +40,9 @@ window.PHONE = {
   },
 
   /* ---------- 전화: 최근 통화 ---------- */
-  /* dir: in(받은) / out(건) · missed: true → 빨간색(부재중·거절) · count: 연속 통화 횟수 */
+  /* dir: in(받은) / out(건) · missed: true → 빨간색(부재중) · count: 연속 통화 횟수 */
   calls: [
-    { name: "이세화", count: 2, kind: "휴대전화", dir: "in", missed: true, when: "23:10", note: "거절" },
+    { name: "이세화", count: 2, kind: "휴대전화", dir: "in", missed: true, when: "23:10" },
     { name: "강민재", kind: "휴대전화", dir: "out", when: "22:48" },
     { name: "오양훈 사무장님", kind: "휴대전화", dir: "in", when: "21:05" },
     { name: "강민재", count: 2, kind: "휴대전화", dir: "in", when: "19:30" },
@@ -54,7 +54,7 @@ window.PHONE = {
     { name: "KNS 박태준 기자", kind: "휴대전화", dir: "in", missed: true, when: "00:40" },
     { name: "강민재", kind: "휴대전화", dir: "out", when: "어제" },
     { name: "오양훈 사무장님", kind: "휴대전화", dir: "in", when: "어제" },
-    { name: "이세화", kind: "휴대전화", dir: "in", missed: true, when: "어제", note: "거절" },
+    { name: "이세화", kind: "휴대전화", dir: "in", missed: true, when: "어제" },
     { name: "새벽경제 김도윤 기자", kind: "휴대전화", dir: "in", missed: true, when: "어제" },
     { name: "02-0000-1937", kind: "<스팸의심>", dir: "in", missed: true, when: "어제" },
     { name: "강민재", count: 3, kind: "휴대전화", dir: "in", when: "금요일" },
@@ -368,15 +368,16 @@ window.PHONE = {
 
   /* ---------- 메모 ---------- */
   notes: [
-    { group: "이전 30일", title: "팬미팅 코너 근황 > 무대 > 하이터치회", date: "2026. 10. 2.", body: "팬미팅 코너 근황 > 무대 > 하이터치회\n\n차기작 에피소드\n하와이 질문 나오면 친구랑 갔다고 하기" },
-    { group: "2025년", title: "렌터카", date: "2025. 12. 29.", body: "렌터카\n\n스노클링\n스카이다이빙 07:30\n비 와도 진행" },
-    { group: "2024년", title: "의주 생일선물", date: "2024. 9. 6.", body: "의주 생일선물\n\n시계?\n반지?\n선인장?" },
-    { group: "2023년", title: "한국 매니지먼트 알아보기", date: "2023. 12. 30.", body: "한국 매니지먼트 알아보기\n\n한국어 lesson\n의주 보고싶다 곳 보자" },
-    { group: "2022년", title: "Screen test 6 p.m", date: "2022. 6. 5.", body: "Screen test 6 p.m\n\n연기하려고 하지 말기\n진짜인거처럼" },
-    { group: "2022년", title: "왕혁상", date: "2022. 5. 16.", body: "왕혁상\n十七歲\n步子小一點\n아픈데 안 아픈 척" },
-    { group: "2020년", title: "마스크 여분", date: "2020. 3. 23.", body: "마스크 여분\n\n보컬 3층\n안무는 영상으로 제출\n열나면 연락" },
-    { group: "2019년", title: "월말평가 8시", date: "2019. 3. 28.", body: "월말평가 8시\n\n右膝不要用力\n안무 영상 보내기" },
-    { group: "2019년", title: "신사역 5번 출구", date: "2019. 3. 4.", body: "신사역 5번 출구\n十點以前到公司" }
+    { group: "이전 7일", title: "다음 주 일정", date: "2026. 10. 17.", body: "다음 주 일정\n\n10/19(월) 10:00 대성물산 법무팀 미팅 – 3층 회의실\n10/21(수) 18:00 준비서면 제출 마감 (2025가합51234)\n10/23(금) 19:00 회식 – 대박집\n\n※ 월요일 미팅 자료 사무장님이 책상에 둠" },
+    { group: "이전 7일", title: "기자 응대", date: "2026. 10. 17.", body: "기자 응대\n\n개별 인터뷰 X\n공식 입장은 사무실 명의로만\n의뢰인 관련 언급 금지\n사무실 전화 – 사무장님께 부재중으로 안내 부탁" },
+    { group: "이전 7일", title: "장태식 정산", date: "2026. 10. 13.", body: "장태식 정산\n\n상길이 병원비 – 영수증 받기\n인천 창고 주소 확인\n\n고양이 전단지 – 보류" },
+    { group: "이전 7일", title: "물리치료", date: "2026. 10. 13.", body: "물리치료\n\n서초메디핏 10/14(수) 16:20\n변경은 하루 전까지" },
+    { group: "이전 30일", title: "대성물산 손배 체크", date: "2026. 10. 2.", body: "대성물산 손배 체크\n\n증인 진술 일관성 다시 확인\n회계자료 원본 요청\n선고 전 화해 가능성 검토\n감정신청 기한" },
+    { group: "이전 30일", title: "조봉준 방송", date: "2026. 10. 2.", body: "조봉준 방송\n\n안 나감." },
+    { group: "이전 30일", title: "사무실 비품", date: "2026. 9. 29.", body: "사무실 비품\n\n토너\nA4 5박스\n원두\n회의실 의자 1개 교체" },
+    { group: "9월", title: "추석 연휴", date: "2026. 9. 21.", body: "추석 연휴\n\n9/24(목) 아침 출발\n어머니 – 과일 / 아버지 – 영양제\n사무실 9/28(월)부터 정상 업무 공지" },
+    { group: "9월", title: "구치소 접견 준비물", date: "2026. 9. 8.", body: "구치소 접견 준비물\n\n변호사 신분증\n접견 신청서\n선임서 사본\n메모지 (필기구 반입 확인)" },
+    { group: "8월", title: "의료분쟁 사건 정리", date: "2026. 8. 20.", body: "의료분쟁 사건 정리\n\n설명의무 위반 – 자기결정권 침해 위자료\n인과관계 추정 요건 정리\n진료기록 감정 신청\n다음 기일 전 의견서" }
   ],
 
   /* ---------- 번역: 저장된 번역 ---------- */
@@ -520,6 +521,8 @@ window.PHONE = {
       { date: "2026-09-18", start: "19:00", end: "22:00", title: "팀 회식", place: "대박집", cal: "회식", memo: "추석 전 회식" },
 
       /* 2026년 10월 */
+      { date: "2026-10-19", start: "10:00", end: "11:00", title: "의뢰인 미팅 – 대성물산 법무팀", place: "사무실 3층 회의실", cal: "업무" },
+      { date: "2026-10-21", start: "18:00", title: "준비서면 제출 마감", cal: "업무", memo: "2025가합51234 / 전자소송" },
       { date: "2026-10-07", start: "10:00", end: "11:00", title: "변론기일 – 의료분쟁 손해배상", place: "서울중앙지방법원 동관 361호", cal: "재판" },
       { date: "2026-10-14", start: "16:00", end: "17:00", title: "의뢰인 미팅 – 한성건설", place: "한성건설 본사", cal: "업무" },
       { date: "2026-10-23", start: "19:00", end: "22:00", title: "팀 회식", place: "대박집", cal: "회식" },

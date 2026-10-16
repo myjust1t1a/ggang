@@ -471,3 +471,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .kcomp .ksend.on~.hash,.kcomp .field:has(.ksend.on) .hash{display:none}
 .sent{animation:sentpop .25s ease-out}
 @keyframes sentpop{from{transform:translateY(8px) scale(.96);opacity:0}}
+
+/* 홈 위젯 */
+.widget{grid-column:span 4;height:150px;border-radius:24px;background:rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;gap:14px;padding:16px;text-align:left;color:#fff;margin-bottom:4px}
+.wg-date{display:flex;flex-direction:column;width:76px;flex:none}
+.wg-date small{color:#ff6b5e;font-size:13px;font-weight:700}
+.wg-date b{font-size:44px;font-weight:300;line-height:1.05;letter-spacing:-.02em}
+.wg-date span{font-size:13px;opacity:.75}
+.wg-list{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.wg-ev{display:flex;gap:8px}
+.wg-ev i{width:4px;border-radius:2px;flex:none}
+.wg-ev div{min-width:0}
+.wg-ev b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wg-ev small{display:block;font-size:12px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wg-none{font-size:13px;opacity:.7}
