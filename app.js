@@ -921,17 +921,30 @@
   function runLines(lines, lineEl, timers, o, onEnd) {
     if (!lines.length) return;
     const showWho = o.showWho ?? lines.some(l => l.who === "me");
+    const label = l => showWho ? `<small>${l.who === "me" ? "차주한" : esc(o.name)}</small>` : "";
     let at = o.start ?? 1100;
-    lines.forEach(l => {
+    for (const l of lines) {
+      if (l.cut) {
+        // 말하는 도중 끊기: 한 글자씩 나오다가 마지막 글자에서 바로 통화 종료 (대사는 그대로 남음)
+        const chars = [...l.text], step = l.typeMs || 85;
+        timers.push(setTimeout(() => {
+          lineEl.innerHTML = `${label(l)}<span data-typed></span>`;
+          lineEl.classList.toggle("me", l.who === "me");
+          lineEl.classList.add("show");
+        }, at));
+        chars.forEach((ch, i) => timers.push(setTimeout(() => { const t = lineEl.querySelector("[data-typed]"); if (t) t.textContent += ch; }, at + 60 + i * step)));
+        timers.push(setTimeout(() => onEnd(true), at + 60 + chars.length * step + 120));
+        return;
+      }
       timers.push(setTimeout(() => {
-        lineEl.innerHTML = `${showWho ? `<small>${l.who === "me" ? "차주한" : esc(o.name)}</small>` : ""}${esc(l.text)}`;
+        lineEl.innerHTML = `${label(l)}${esc(l.text)}`;
         lineEl.classList.toggle("me", l.who === "me");
         lineEl.classList.add("show");
       }, at));
       at += l.ms || 2800;
       timers.push(setTimeout(() => lineEl.classList.remove("show"), at));
-    });
-    timers.push(setTimeout(onEnd, at + (o.hangUp ?? 900)));
+    }
+    timers.push(setTimeout(() => onEnd(false), at + (o.hangUp ?? 900)));
   }
   /* ================= 거는 전화 (통화 기록에서 누르면) ================= */
   let ringbackTimer = null;
@@ -968,10 +981,10 @@
     callEl.querySelectorAll('[data-key="mute"],[data-key="audio"]').forEach(k => k.onclick = () => k.classList.toggle("on"));
     ringbackOnce(); ringbackTimer = setInterval(ringbackOnce, 3000);
     let done = false;
-    const finish = label => {
+    const finish = (label, keepLine) => {
       if (done) return; done = true;
-      timers.forEach(clearTimeout); clearInterval(ringbackTimer); clearInterval(callTimer); lineEl.classList.remove("show");
-      logOutgoing(name); tEl.textContent = label; setTimeout(closeCall, 900);
+      timers.forEach(clearTimeout); clearInterval(ringbackTimer); clearInterval(callTimer); if (!keepLine) lineEl.classList.remove("show");
+      logOutgoing(name); tEl.textContent = label; setTimeout(closeCall, keepLine ? 1600 : 900);
     };
     callEl.querySelector("[data-end]").onclick = () => finish(callEl.classList.contains("dialing") ? "통화 취소" : "통화 종료");
     const waitMs = answered ? 3000 + Math.random() * 3000 : 9000;
@@ -982,7 +995,7 @@
       const t0 = Date.now();
       const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); tEl.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
       draw(); callTimer = setInterval(draw, 1000);
-      runLines(script.lines || [], lineEl, timers, { start: script.lineStart, hangUp: script.hangUpAfter, name }, () => finish("통화 종료"));
+      runLines(script.lines || [], lineEl, timers, { start: script.lineStart, hangUp: script.hangUpAfter, name }, cut => finish("통화 종료", cut));
     }, waitMs));
   }
   function logOutgoing(name) {
