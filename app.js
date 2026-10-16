@@ -863,6 +863,7 @@
       </div>
       <div class="cu-liveview">
         <div class="cu-name">${esc(name)}</div><div class="cu-sub"><span class="cu-sim">기본</span><span data-ctime>00:00</span></div>
+        <div class="cu-line" data-line></div>
         <div class="cu-grid">${[["mute", "소리 끔"], ["keypad", "키패드"], ["audio", "오디오"], ["add", "통화 추가"], ["facetime", "FaceTime"], ["contact", "연락처"]].map(([k, l]) => `<button class="cu-key" data-key="${k}"><i>${CI[k]}</i><small>${l}</small></button>`).join("")}</div>
         <button class="cu-end" data-end>${CI.hang}</button>
       </div>
@@ -893,7 +894,17 @@
       const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); tEl.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
       draw(); callTimer = setInterval(draw, 1000);
       callEl.querySelectorAll('[data-key="mute"],[data-key="audio"]').forEach(k => k.onclick = () => k.classList.toggle("on"));
-      callEl.querySelector("[data-end]").onclick = () => { clearInterval(callTimer); logCall(name, false); tEl.textContent = "통화 종료"; setTimeout(closeCall, 700); };
+      const lineEl = callEl.querySelector("[data-line]"), timers = [];
+      const endCall = () => { timers.forEach(clearTimeout); clearInterval(callTimer); lineEl.classList.remove("show"); logCall(name, false); tEl.textContent = "통화 종료"; setTimeout(closeCall, 900); };
+      callEl.querySelector("[data-end]").onclick = endCall;
+      // 상대방 대사: 차례대로 보여주고 마지막 대사 뒤에 전화가 끊김
+      let at = C.lineStart ?? 1000;
+      (C.lines || []).forEach(l => {
+        timers.push(setTimeout(() => { lineEl.textContent = l.text; lineEl.classList.add("show"); }, at));
+        at += l.ms || 1800;
+        timers.push(setTimeout(() => lineEl.classList.remove("show"), at - 250));
+      });
+      if ((C.lines || []).length) timers.push(setTimeout(endCall, at + (C.hangUpAfter ?? 300)));
     }
   }
   function closeCall() {

@@ -556,3 +556,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cu-key.on svg{filter:invert(1)}
 .cu-end{position:absolute;bottom:76px;width:86px;height:86px;border-radius:50%;background:#ff3b30;display:flex;align-items:center;justify-content:center}
 .cu-end svg{width:42px;height:42px}
+
+.cu-line{position:absolute;top:255px;left:24px;right:24px;text-align:center;font-size:24px;font-weight:500;line-height:1.4;color:#fff;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;text-shadow:0 1px 8px rgba(0,0,0,.35);word-break:keep-all}
+.cu-line.show{opacity:1;transform:none}

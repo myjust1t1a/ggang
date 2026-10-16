@@ -23,7 +23,15 @@ window.PHONE = {
   time: "11:59:30",            // 휴대폰을 처음 연 순간의 시각(시:분:초). 이후 실제 시간만큼 흘러가요
   passcode: "1201",            // 잠금화면 암호 (4자리)
   /* 잠금 해제 후 휴대폰 속 시간이 afterMinutes분 흐르면 걸려오는 전화 (받아도 소리는 나지 않아요) */
-  incomingCall: { from: "강민재", afterMinutes: 3, ringSeconds: 30 },
+  incomingCall: {
+    from: "강민재", afterMinutes: 3, ringSeconds: 30,
+    /* 전화를 받으면 화면에 차례대로 뜨는 대사 (ms = 보여주는 시간, 1000 = 1초). 마지막 대사 뒤 전화가 끊겨요 */
+    lines: [
+      { text: "변호사님, 저 지하에요", ms: 1800 },
+      { text: "어서 내려오세요!", ms: 1800 },
+      { text: "사랑해요", ms: 2000 }
+    ]
+  },
   today: "2026-10-18",
   /* 앱 아이콘을 직접 고른 이미지로 바꾸기
      img 폴더에 이미지(정사각형 png/jpg 권장)를 넣고 "img/파일명.png" 로 적으세요.
