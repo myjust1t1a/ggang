@@ -1041,7 +1041,8 @@
 
   /* ================= 잠금화면 · 암호 ================= */
   let locked = false, lockEl = null, pin = "";
-  const PASS = String(P.passcode || "1201");
+  const PASS = String(P.passcode || "");
+  const PASS_LEN = PASS.length || 4;
   const keys = [["1", ""], ["2", "ABC"], ["3", "DEF"], ["4", "GHI"], ["5", "JKL"], ["6", "MNO"], ["7", "PQRS"], ["8", "TUV"], ["9", "WXYZ"]];
   function lockPhone() {
     locked = true; pin = "";
@@ -1057,7 +1058,7 @@
       </div>
       <div class="lk-pin">
         <div class="pin-title">암호 입력</div>
-        <div class="pin-dots">${"<i></i>".repeat(PASS.length)}</div>
+        <div class="pin-dots">${"<i></i>".repeat(PASS_LEN)}</div>
         <div class="pin-pad">${keys.map(([n, l]) => `<button data-k="${n}"><b>${n}</b><small>${l}</small></button>`).join("")}<span></span><button data-k="0"><b>0</b></button><span></span></div>
         <div class="pin-foot"><span>긴급 상황</span><button data-del>취소</button></div>
       </div>
@@ -1080,10 +1081,10 @@
     lockEl.querySelector("[data-del]").textContent = pin ? "삭제" : "취소";
   }
   function press(n) {
-    if (!locked || pin.length >= PASS.length) return;
+    if (!locked || pin.length >= PASS_LEN) return;
     pin += n; drawPin();
-    if (pin.length < PASS.length) return;
-    if (pin === PASS) setTimeout(unlock, 150);
+    if (pin.length < PASS_LEN) return;
+    if (!PASS || pin === PASS) setTimeout(unlock, 150);
     else setTimeout(() => { const dots = lockEl.querySelector(".pin-dots"); dots.classList.remove("shake"); void dots.offsetWidth; dots.classList.add("shake"); try { navigator.vibrate && navigator.vibrate(120); } catch (e) {} pin = ""; drawPin(); }, 150);
   }
   function unlock() {
