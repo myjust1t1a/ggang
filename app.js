@@ -100,7 +100,7 @@
     if (stack.length <= 1) { const hb = homebar.querySelector("i"); hb.animate([{ transform: "translateY(0)" }, { transform: "translateY(-6px)" }, { transform: "translateY(0)" }], 300); return; }
     const n = stack.length - 1; popTo(0, true); syncHistory(n);
   }
-  homebar.addEventListener("click", goHome);
+  homebar.addEventListener("click", () => { if (locked) { if (!lockEl.classList.contains("pin")) showPin(); return; } goHome(); });
   // 제스처: 아래에서 위로 쓸기 = 홈 / 왼쪽 끝에서 오른쪽으로 쓸기 = 뒤로
   let g = null;
   const dev = $("#device");
@@ -109,7 +109,7 @@
     g = { x: e.clientX, y: e.clientY, bottom: r.bottom - e.clientY < 60, left: e.clientX - r.left < 28 };
   });
   dev.addEventListener("pointerup", e => {
-    if (!g) return;
+    if (!g || locked) { g = null; return; }
     const dx = e.clientX - g.x, dy = g.y - e.clientY;
     if (g.bottom && dy > 50) goHome();
     else if (g.left && dx > 60 && Math.abs(dy) < 60) back();
@@ -119,7 +119,7 @@
   /* ================= 홈 화면 ================= */
   const apps = [
     ["mail", "메일"], ["calendar", "캘린더"], ["clock", "시계"], ["weather", "날씨"],
-    ["notes", "메모"], ["photos", "사진"], ["camera", "카메라"], ["translate", "Google 번역"]
+    ["notes", "메모"], ["photos", "사진"], ["camera", "카메라"]
   ];
   /* 홈 화면 위젯: 오늘 날짜 + 다음 일정 2개 */
   function nextEvents(n) {
@@ -379,7 +379,7 @@
     const next = () => {
       if (i >= queue.length) return;
       setTimeout(function fire() {
-        if (!layer.classList.contains("open")) { setTimeout(fire, 1000); return; }   // 휴대폰이 닫혀 있으면 열릴 때까지 대기
+        if (!layer.classList.contains("open") || locked) { setTimeout(fire, 1000); return; }   // 휴대폰이 닫혀 있으면 열릴 때까지 대기
         deliverKakao(N.from, queue[i++].text);
         next();
       }, queue[i].delay || 2000);
@@ -809,7 +809,8 @@
     document.querySelectorAll(".ic-m").forEach(n => n.setAttribute("transform", `rotate(${ma} 30 30)`));
     document.querySelectorAll(".ic-sec").forEach(n => n.setAttribute("transform", `rotate(${sa} 30 30)`));
     // 오늘 일정 중 alert: true 인 것이 시작 시각이 되면 알림
-    if (!layer.classList.contains("open")) return;
+    if (lockEl) lockEl.querySelector("[data-ltime]").textContent = (() => { const [a, b] = P.time.split(":"); return `${+a > 12 ? +a - 12 : +a}:${b}`; })();
+    if (!layer.classList.contains("open") || locked) return;
     const today = P.today;
     ((P.calendar && P.calendar.events) || []).forEach(e => {
       const id = e.date + e.start + e.title;
@@ -824,15 +825,78 @@
   }
   setInterval(tick, 1000);
 
+
+  /* ================= 잠금화면 · 암호 ================= */
+  let locked = false, lockEl = null, pin = "";
+  const PASS = String(P.passcode || "1201");
+  const keys = [["1", ""], ["2", "ABC"], ["3", "DEF"], ["4", "GHI"], ["5", "JKL"], ["6", "MNO"], ["7", "PQRS"], ["8", "TUV"], ["9", "WXYZ"]];
+  function lockPhone() {
+    locked = true; pin = "";
+    lockEl?.remove();
+    const [hh, mm] = P.time.split(":");
+    lockEl = h(`<div class="lock">
+      <div class="lk-main">
+        <svg class="lk-ic" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+        <div class="lk-date">${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일</div>
+        <div class="lk-time" data-ltime>${+hh > 12 ? +hh - 12 : +hh}:${mm}</div>
+        <div class="lk-bottom"><span class="lk-btn"><svg viewBox="0 0 24 24"><path d="M8 2h8l-1.5 6v13a1.5 1.5 0 0 1-1.5 1.5h-2A1.5 1.5 0 0 1 9.5 21V8z" fill="currentColor"/></svg></span><span class="lk-btn"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="currentColor"/><circle cx="12" cy="13" r="3.5" fill="#333"/></svg></span></div>
+        <div class="lk-hint">위로 쓸어올려 열기</div>
+      </div>
+      <div class="lk-pin">
+        <div class="pin-title">암호 입력</div>
+        <div class="pin-dots">${"<i></i>".repeat(PASS.length)}</div>
+        <div class="pin-pad">${keys.map(([n, l]) => `<button data-k="${n}"><b>${n}</b><small>${l}</small></button>`).join("")}<span></span><button data-k="0"><b>0</b></button><span></span></div>
+        <div class="pin-foot"><span>긴급 상황</span><button data-del>취소</button></div>
+      </div>
+    </div>`);
+    $("#device").insertBefore(lockEl, $("#banner"));
+    $("#device").classList.add("is-locked");
+    // 아래에서 위로 쓸어올리면 암호 화면
+    let sy = null;
+    lockEl.addEventListener("pointerdown", e => { if (!lockEl.classList.contains("pin")) sy = e.clientY; });
+    lockEl.addEventListener("pointerup", e => { if (sy !== null && sy - e.clientY > 60) showPin(); sy = null; });
+    lockEl.addEventListener("click", e => {
+      const k = e.target.closest("[data-k]"); if (k) { press(k.dataset.k); return; }
+      if (e.target.closest("[data-del]")) { if (pin) { pin = pin.slice(0, -1); drawPin(); } else hidePin(); }
+    });
+  }
+  function showPin() { pin = ""; drawPin(); lockEl.classList.add("pin"); }
+  function hidePin() { lockEl.classList.remove("pin"); }
+  function drawPin() {
+    lockEl.querySelectorAll(".pin-dots i").forEach((d, i) => d.classList.toggle("on", i < pin.length));
+    lockEl.querySelector("[data-del]").textContent = pin ? "삭제" : "취소";
+  }
+  function press(n) {
+    if (!locked || pin.length >= PASS.length) return;
+    pin += n; drawPin();
+    if (pin.length < PASS.length) return;
+    if (pin === PASS) setTimeout(unlock, 150);
+    else setTimeout(() => { const dots = lockEl.querySelector(".pin-dots"); dots.classList.remove("shake"); void dots.offsetWidth; dots.classList.add("shake"); try { navigator.vibrate && navigator.vibrate(120); } catch (e) {} pin = ""; drawPin(); }, 150);
+  }
+  function unlock() {
+    locked = false;
+    if (!clockStart) clockStart = Date.now();   // 처음 잠금을 풀 때부터 시간이 흐르기 시작
+    const el = lockEl; lockEl = null;
+    $("#device").classList.remove("is-locked");
+    el.classList.add("out"); setTimeout(() => el.remove(), 450);
+    tick();
+  }
+  document.addEventListener("keydown", e => {
+    if (!locked || !lockEl || !layer.classList.contains("open")) return;
+    if (/^[0-9]$/.test(e.key)) { if (!lockEl.classList.contains("pin")) showPin(); press(e.key); }
+    else if (e.key === "Backspace" && pin) { pin = pin.slice(0, -1); drawPin(); }
+    else if ((e.key === "Enter" || e.key === "ArrowUp" || e.key === " ") && !lockEl.classList.contains("pin")) { e.preventDefault(); showPin(); }
+  });
+
   /* ================= 열기/닫기 ================= */
   let startedOnPhone = false;
   function openPhone() {
     if (layer.classList.contains("open")) return;
-    if (!clockStart) clockStart = Date.now();
     try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     screens.innerHTML = ""; stack = [];
     show(homeScreen(), "none");
     stack[0].classList.remove("push-enter");
+    lockPhone();
     layer.classList.add("open"); layer.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
   }

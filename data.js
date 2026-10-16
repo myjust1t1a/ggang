@@ -21,13 +21,14 @@ window.STORY = {
 
 window.PHONE = {
   time: "11:59:30",            // 휴대폰을 처음 연 순간의 시각(시:분:초). 이후 실제 시간만큼 흘러가요
+  passcode: "1201",            // 잠금화면 암호 (4자리)
   today: "2026-10-18",
   /* 앱 아이콘을 직접 고른 이미지로 바꾸기
      img 폴더에 이미지(정사각형 png/jpg 권장)를 넣고 "img/파일명.png" 로 적으세요.
      비워두면("") 기본 아이콘. 캘린더·시계를 이미지로 바꾸면 날짜·시곗바늘은 움직이지 않아요. */
   icons: {
     calendar: "", photos: "", camera: "", clock: "",
-    notes: "", mail: "", translate: "", weather: "",
+    notes: "", mail: "", weather: "",
     phone: "", chrome: "", messages: "", kakao: ""
   },          // 휴대폰 속 오늘 날짜 (캘린더 아이콘·캘린더 앱 기준)
   badges: { phone: 7, mail: 2, messages: 3, kakao: 12 },
