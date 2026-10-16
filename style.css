@@ -580,3 +580,35 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .screen{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 /* 통화 중에도 알림이 통화 화면 위에 보이도록 */
 .device.in-call .banner{z-index:60}
+
+/* ===== 작은 화면(브라우저 주소창 등으로 높이가 낮을 때) 대응: --s = 화면높이/844 ===== */
+.device{--s:1}
+.cu-ringview,.cu-liveview{display:flex;flex-direction:column;align-items:center;padding:calc(118px*var(--s)) 0 calc(64px*var(--s));box-sizing:border-box}
+.cu-name{font-size:max(24px,calc(34px*var(--s)))}
+.cu-sub{font-size:max(14px,calc(18px*var(--s)))}
+.cu-line{position:static;flex:1 1 auto;min-height:0;width:100%;box-sizing:border-box;padding:0 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:max(17px,calc(21px*var(--s)))}
+.cu-liveview .cu-grid{margin:0;grid-template-columns:repeat(3,calc(86px*var(--s)));gap:calc(20px*var(--s)) calc(32px*var(--s))}
+.cu-key i{width:calc(86px*var(--s));height:calc(86px*var(--s))}
+.cu-key svg{width:calc(36px*var(--s));height:calc(36px*var(--s))}
+.cu-key small{font-size:max(12px,calc(15px*var(--s)))}
+.cu-end{position:static;flex:none;margin-top:calc(44px*var(--s));width:calc(86px*var(--s));height:calc(86px*var(--s))}
+.cu-end svg{width:calc(42px*var(--s));height:calc(42px*var(--s))}
+.cu-ringview .cu-sub{margin-bottom:auto}
+.cu-small{position:static;width:calc(100% - 84px);margin-bottom:calc(40px*var(--s))}
+.cu-small button{font-size:max(13px,calc(16px*var(--s)))}
+.cu-slider{position:relative;bottom:auto;left:auto;right:auto;width:calc(100% - 56px);box-sizing:border-box;height:calc(108px*var(--s));border-radius:calc(54px*var(--s));flex:none;margin-bottom:calc(2px*var(--s))}
+.cu-knob{width:calc(96px*var(--s));height:calc(96px*var(--s))}
+.cu-knob svg{width:calc(42px*var(--s));height:calc(42px*var(--s))}
+.cu-track-text{left:calc(96px*var(--s) + 6px);font-size:max(16px,calc(21px*var(--s)))}
+/* 잠금화면 숫자판 */
+.lk-pin{padding-top:calc(100px*var(--s))}
+.pin-title{font-size:max(17px,calc(20px*var(--s)));margin-bottom:calc(20px*var(--s))}
+.pin-dots{margin-bottom:calc(50px*var(--s))}
+.pin-pad{grid-template-columns:repeat(3,calc(80px*var(--s)));gap:calc(16px*var(--s)) calc(26px*var(--s))}
+.pin-pad button{width:calc(80px*var(--s));height:calc(80px*var(--s))}
+.pin-pad b{font-size:calc(34px*var(--s))}
+.pin-pad small{font-size:calc(10px*var(--s));height:calc(12px*var(--s))}
+.pin-foot{bottom:calc(44px*var(--s))}
+.lk-time{font-size:calc(92px*var(--s))}
+.lk-main{padding-top:calc(62px*var(--s))}
+.lk-bottom{bottom:calc(58px*var(--s))}

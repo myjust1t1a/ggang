@@ -1135,8 +1135,16 @@
 
   /* ================= 열기/닫기 ================= */
   let startedOnPhone = false;
+  /* 화면 높이에 맞춰 통화·잠금 화면 크기 조절 */
+  function fitScale() {
+    const dev = $("#device"), hgt = dev.clientHeight || 844;
+    dev.style.setProperty("--s", Math.min(1, Math.max(.55, hgt / 844)).toFixed(3));
+  }
+  window.addEventListener("resize", fitScale);
+  if (window.visualViewport) visualViewport.addEventListener("resize", fitScale);
   function openPhone() {
     if (layer.classList.contains("open")) return;
+    requestAnimationFrame(fitScale);
     try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     screens.innerHTML = ""; stack = [];
     show(homeScreen(), "none");
