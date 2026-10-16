@@ -150,7 +150,7 @@
       <div class="scroll">
         <div class="bigtitle">최근 통화</div>
         <div class="searchfield">${ic.search}<span>검색</span><span class="mic">${ic.mic}</span></div>
-        ${P.calls.map(c => `<div class="call">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></div>`).join("")}
+        ${P.calls.map(c => `<div class="call">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}${c.note ? ` · ${esc(c.note)}` : ""}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></div>`).join("")}
         <div style="height:20px"></div>
       </div>
       <nav class="tabbar">
@@ -231,7 +231,7 @@
       <div class="navbar"><span class="pill">편집</span><b style="font-size:17px">메시지</b><span class="pill round">${ic.menu}</span></div>
       <div class="scroll">
         ${M.pinned ? `<button class="pinned" style="width:100%" data-chat="${esc(M.pinned)}">${av(M.pinned)}<span>${esc(M.pinned)}</span></button>` : `<div style="height:8px"></div>`}
-        ${M.threads.map((t, i) => `<button class="thread" style="width:100%;text-align:left" data-thread="${i}">${t.unread ? '<i class="dot"></i>' : ""}${av(t.name)}<div class="body"><div class="row"><span class="nm">${esc(t.name)}</span><span class="when">${esc(t.when)}</span></div><div class="pv">${esc(t.preview)}</div></div></button>`).join("")}
+        <div data-threads>${threadsHTML()}</div>
         <div style="height:110px"></div>
       </div>
       <div class="bottomsearch" style="position:absolute;left:0;right:0;bottom:0"><div class="searchfield">${ic.search}<span>검색</span><span class="mic">${ic.mic}</span></div><span class="pill round">${ic.compose}</span></div>
@@ -239,9 +239,24 @@
     el.addEventListener("click", e => {
       const c = e.target.closest("[data-chat]"), t = e.target.closest("[data-thread]");
       if (c) show(imChat(c.dataset.chat, M.chats[c.dataset.chat] || []), "push");
-      if (t) { const th = M.threads[+t.dataset.thread]; t.querySelector(".dot")?.remove(); show(imChat(th.name, M.chats[th.name] || [{ text: th.preview }], th.sms), "push"); }
+      if (t) { const th = M.threads[+t.dataset.thread]; th.unread = false; t.querySelector(".dot")?.remove(); if (!M.chats[th.name]) M.chats[th.name] = [{ text: th.preview }]; show(imChat(th.name, M.chats[th.name], th.sms), "push"); }
     });
+    messagesListEl = el;
     return el;
+  }
+  let messagesListEl = null;
+  function threadsHTML() {
+    return P.messages.threads.map((t, i) => `<button class="thread" style="width:100%;text-align:left" data-thread="${i}">${t.unread ? '<i class="dot"></i>' : ""}${av(t.name)}<div class="body"><div class="row"><span class="nm">${esc(t.name)}</span><span class="when">${esc(t.when)}</span></div><div class="pv">${esc(t.preview)}</div></div></button>`).join("");
+  }
+  /* 입력창: 글자를 쓰면 보내기 버튼이 나오고, 보내면 onSend(text) */
+  function wireComposer(el, onSend) {
+    const input = el.querySelector("[data-input]"), btn = el.querySelector("[data-send]");
+    const sync = () => btn.classList.toggle("on", input.value.trim().length > 0);
+    const send = () => { const t = input.value.trim(); if (!t) return; input.value = ""; sync(); onSend(t); input.focus(); };
+    input.addEventListener("input", sync);
+    input.addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); send(); } });
+    btn.addEventListener("click", send);
+    ["pointerdown", "pointerup"].forEach(t => el.querySelector(".composer, .kcomp").addEventListener(t, e => e.stopPropagation()));
   }
   function imChat(name, msgs, sms) {
     const body = msgs.map(m => {
@@ -254,9 +269,18 @@
     const el = h(`<section class="screen white">
       <div class="chat-head"><button class="pill round" data-back>${ic.back}</button><div class="who">${av(name)}<b>${esc(name)} ›</b></div><span class="pill round">${ic.video}</span></div>
       <div class="scroll" data-autobottom><div class="imsg">${body}</div></div>
-      <div class="composer"><span class="plus">+</span><span class="field">${sms ? "문자 메시지" : "iMessage"}</span></div>
+      <div class="composer${sms ? " is-sms" : ""}"><span class="plus">+</span><label class="field"><input data-input enterkeyhint="send" autocomplete="off" placeholder="${sms ? "문자 메시지" : "iMessage"}"><button class="send" data-send aria-label="보내기"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></label></div>
     </section>`);
     el.querySelector("[data-back]").onclick = back;
+    wireComposer(el, text => {
+      msgs.push({ me: true, text });
+      el.querySelector(".imsg").insertAdjacentHTML("beforeend", `<div class="bub me${sms ? " sms" : ""} sent">${esc(text)}</div>`);
+      const sc = el.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight;
+      const M = P.messages; let th = M.threads.find(t => t.name === name);
+      if (th) M.threads.splice(M.threads.indexOf(th), 1); else th = { name, sms };
+      Object.assign(th, { preview: text, when: P.time, unread: false }); M.threads.unshift(th);
+      if (messagesListEl && messagesListEl.isConnected) messagesListEl.querySelector("[data-threads]").innerHTML = threadsHTML();
+    });
     return el;
   }
 
@@ -286,8 +310,10 @@
       const name = r.dataset.room, c = K.chats.find(x => x.name === name);
       if (c && c.unread) { P.badges.kakao -= c.unread; c.unread = 0; updKakaoBadges(); const em = r.querySelector(".meta em"); if (em) em.remove(); }
       const msgs = K.rooms[name] || [{ text: c ? c.preview : "", time: c?.when }];
-      show(kakaoRoom(name, msgs), "push");
+      if (!K.rooms[name]) K.rooms[name] = msgs;
+      show(kakaoRoom(name, K.rooms[name]), "push");
     });
+    kakaoList = { el, row };
     // 앱을 열고 조금 뒤 알림 도착 (여러 개면 차례대로)
     const N = K.notification;
     const queue = N && N.from ? (N.messages || [{ text: N.text, delay: N.delay }]) : [];
@@ -320,6 +346,7 @@
     }
     return el;
   }
+  let kakaoList = null;
   function updKakaoBadges() {
     document.querySelectorAll('[data-badge="kakao"],[data-kbadge]').forEach(b => { b.textContent = P.badges.kakao; b.style.display = P.badges.kakao > 0 ? "" : "none"; });
   }
@@ -334,10 +361,23 @@
     const el = h(`<section class="screen kroom">
       <div class="chat-head"><button class="pill round" data-back>${ic.back}</button><b style="font-size:17px;padding-top:10px">${esc(name)}</b><span class="pill round">${ic.search}</span></div>
       <div class="scroll" data-autobottom><div class="kmsgs">${body}</div></div>
-      <div class="kcomp"><div class="field"><span class="plus">+</span>메시지 입력<span class="hash">#</span></div></div>
+      <div class="kcomp"><label class="field"><span class="plus">+</span><input data-input enterkeyhint="send" autocomplete="off" placeholder="메시지 입력"><span class="hash">#</span><button class="ksend" data-send aria-label="전송"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="#3c1e1e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></label></div>
     </section>`);
     el.dataset.room = name;
     el.querySelector("[data-back]").onclick = back;
+    wireComposer(el, text => {
+      const todayLabel = `${TODAY.getFullYear()}년 ${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일 ${WD[TODAY.getDay()]}요일`;
+      const lastDate = [...msgs].reverse().find(m => m.date);
+      const needDate = !lastDate || lastDate.date !== todayLabel;
+      if (needDate) msgs.push({ date: todayLabel });
+      msgs.push({ me: true, text, time: P.time, unread: 1 });
+      el.querySelector(".kmsgs").insertAdjacentHTML("beforeend", `${needDate ? `<div class="date">${todayLabel}</div>` : ""}<div class="kline me sent"><div class="kb">${esc(text)}</div><div class="kmeta"><i>1</i><span>${esc(P.time)}</span></div></div>`);
+      const sc = el.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight;
+      const K = P.kakao; let c = K.chats.find(x => x.name === name);
+      if (c) K.chats.splice(K.chats.indexOf(c), 1); else c = { name };
+      Object.assign(c, { preview: text, when: P.time, unread: 0 }); K.chats.unshift(c);
+      if (kakaoList && kakaoList.el.isConnected) { const list = kakaoList.el.querySelector("[data-list]"); list.querySelector(`[data-room="${CSS.escape(name)}"]`)?.remove(); list.prepend(h(kakaoList.row(c))); }
+    });
     return el;
   }
   const banner = $("#banner"); let bannerTimer;

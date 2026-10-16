@@ -30,7 +30,7 @@ window.PHONE = {
     notes: "", insta: "", translate: "", netflix: "",
     phone: "", chrome: "", messages: "", kakao: ""
   },          // 휴대폰 속 오늘 날짜 (캘린더 아이콘·캘린더 앱 기준)
-  badges: { phone: 10, safari: 0, messages: 3, kakao: 12 },
+  badges: { phone: 7, safari: 0, messages: 3, kakao: 12 },
 
   /* 프로필 사진 (비우면 기본 아이콘) */
   avatars: {
@@ -40,13 +40,31 @@ window.PHONE = {
   },
 
   /* ---------- 전화: 최근 통화 ---------- */
+  /* dir: in(받은) / out(건) · missed: true → 빨간색(부재중·거절) · count: 연속 통화 횟수 */
   calls: [
-    { name: "홍보팀 한수신", count: 2, kind: "휴대전화", dir: "in", missed: true, when: "00:05" },
-    { name: "juju", count: 6, kind: "휴대전화", dir: "out", when: "어제" },
-    { name: "이팀장님", kind: "휴대전화", dir: "in", when: "어제" },
-    { name: "팬미팅 서우 PD", kind: "휴대전화", dir: "in", when: "어제" },
-    { name: "juju", kind: "휴대전화", dir: "out", when: "목요일" },
-    { name: "+886 932-783-516", kind: "<스팸의심>", dir: "in", missed: true, when: "목요일" },
+    { name: "이세화", count: 2, kind: "휴대전화", dir: "in", missed: true, when: "23:10", note: "거절" },
+    { name: "강민재", kind: "휴대전화", dir: "out", when: "22:48" },
+    { name: "오양훈 사무장님", kind: "휴대전화", dir: "in", when: "21:05" },
+    { name: "강민재", count: 2, kind: "휴대전화", dir: "in", when: "19:30" },
+    { name: "070-0000-4821", kind: "<스팸의심>", dir: "in", missed: true, when: "16:02" },
+    { name: "강수일", kind: "휴대전화", dir: "out", when: "14:15" },
+    { name: "오양훈 사무장님", count: 3, kind: "휴대전화", dir: "out", when: "11:20" },
+    { name: "강민재", kind: "휴대전화", dir: "in", when: "10:02" },
+    { name: "한결일보 오지현 기자", count: 3, kind: "휴대전화", dir: "in", missed: true, when: "01:10" },
+    { name: "KNS 박태준 기자", kind: "휴대전화", dir: "in", missed: true, when: "00:40" },
+    { name: "강민재", kind: "휴대전화", dir: "out", when: "어제" },
+    { name: "오양훈 사무장님", kind: "휴대전화", dir: "in", when: "어제" },
+    { name: "이세화", kind: "휴대전화", dir: "in", missed: true, when: "어제", note: "거절" },
+    { name: "새벽경제 김도윤 기자", kind: "휴대전화", dir: "in", missed: true, when: "어제" },
+    { name: "02-0000-1937", kind: "<스팸의심>", dir: "in", missed: true, when: "어제" },
+    { name: "강민재", count: 3, kind: "휴대전화", dir: "in", when: "금요일" },
+    { name: "오양훈 사무장님", kind: "휴대전화", dir: "out", when: "금요일" },
+    { name: "강수일", kind: "휴대전화", dir: "in", when: "목요일" },
+    { name: "강민재", kind: "휴대전화", dir: "out", when: "목요일" },
+    { name: "오양훈 사무장님", count: 2, kind: "휴대전화", dir: "in", when: "수요일" },
+    { name: "+1 (000) 555-0142", kind: "<스팸의심>", dir: "in", missed: true, when: "수요일" },
+    { name: "강민재", kind: "휴대전화", dir: "in", when: "화요일" },
+    { name: "오양훈 사무장님", kind: "휴대전화", dir: "out", when: "월요일" }
   ],
 
   /* ---------- 크롬 ---------- */
@@ -209,6 +227,8 @@ window.PHONE = {
       { name: "새벽경제 김도윤 기자", preview: "카톡 확인하시면 회신 부탁드립니다.", when: "21:40", unread: 3 },
       { name: "데일리저널 송하린 기자", preview: "편하실 때 연락 주세요!", when: "20:05", unread: 2 },
       { name: "국정원", preview: "지난번에 맡긴거 다 했어요.", when: "18:30", unread: 1 },
+      { name: "어머니", preview: "주한아 반찬 보냈어.", when: "14:20" },
+      { name: "아버지", preview: "그래. 너도 밥 잘 챙겨 먹어라.", when: "어제" },
       { name: "강민재", preview: "다행이다 😭😭 감사합니다 변호사님 💛", when: "어제" },
       { name: "카카오페이", preview: "차주한님, 10월 결제 리포트가 도착했어요 📊", when: "어제", unread: 1, channel: true },
       { name: "카카오톡 선물하기", preview: "가을 시즌 선물 기획전 최대 40% 할인 🎁", when: "10월 16일", unread: 1, channel: true }
@@ -222,6 +242,47 @@ window.PHONE = {
       ]
     },
     rooms: {
+      "어머니": [
+        { date: "2026년 5월 7일 목요일" },
+        { me: true, text: "어머니, 내일 어버이날이라 저녁에 찾아뵐게요.", time: "12:30" },
+        { text: "바쁜데 뭘 와. 그래도 오면 좋지", time: "12:41" },
+        { text: "이번에도 민재 오니?", time: "12:41" },
+        { me: true, text: "네. 같이 갈게요.", time: "12:50" },
+        { date: "2026년 9월 14일 월요일" },
+        { me: true, text: "추석 연휴 첫날에 내려갈게요.", time: "20:10" },
+        { text: "그래. 차 막히니까 조심해서 와라", time: "20:15" },
+        { text: "민재도 같이 오지?", time: "20:15" },
+        { me: true, text: "네.", time: "20:20" },
+        { date: "2026년 9월 30일 수요일" },
+        { img: "", caption: "마당 국화 사진", time: "10:02" },
+        { text: "마당에 국화 폈다. 꽃이 예쁘지?", time: "10:02" },
+        { me: true, text: "예쁘네요.", time: "12:33" },
+        { date: "2026년 10월 7일 수요일" },
+        { text: "잘 지내니?", time: "21:00" },
+        { me: true, text: "네, 잘 지내요. 어머니는요?", time: "21:12" },
+        { text: "우리는 잘 있지. 밥 거르지 말고", time: "21:13" },
+        { date: "2026년 10월 17일 토요일" },
+        { text: "뉴스 봤다.", time: "20:31" },
+        { text: "괜찮은 거지?", time: "20:31" },
+        { me: true, text: "괜찮아요. 걱정 마세요.", time: "20:45" },
+        { date: "2026년 10월 18일 일요일" },
+        { text: "주한아 반찬 보냈어.", time: "14:20" }
+      ],
+      "아버지": [
+        { date: "2026년 8월 2일 일요일" },
+        { me: true, text: "아버지, 요즘 몸은 괜찮으세요?", time: "11:05" },
+        { text: "괜찮다.", time: "11:40" },
+        { me: true, text: "무릎은 병원 다녀오셨어요?", time: "11:41" },
+        { text: "다녀왔다. 별일 없단다.", time: "12:02" },
+        { date: "2026년 9월 27일 일요일" },
+        { text: "잘 올라갔냐", time: "19:20" },
+        { me: true, text: "네, 잘 도착했어요. 혈압약은 잘 챙겨 드세요?", time: "19:35" },
+        { text: "먹고 있다.", time: "19:50" },
+        { date: "2026년 10월 17일 토요일" },
+        { text: "엄마한테 얘기 들었다. 너무 신경 쓰지 마라.", time: "21:10" },
+        { me: true, text: "네. 아버지는 요즘 몸 괜찮으시죠?", time: "21:22" },
+        { text: "그래. 너도 밥 잘 챙겨 먹어라.", time: "21:30" }
+      ],
       "장태식": [
         { date: "2026년 10월 6일 화요일" },
         { text: "변호사님 상길이 놈이 다쳤는데 병원비 주셔야함 ㅋㅋ" },
