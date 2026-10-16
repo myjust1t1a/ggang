@@ -155,14 +155,17 @@
   }
 
   /* ================= 전화 ================= */
-  function phoneApp() {
+  function callsHTML() {
     const arrow = d => d === "out" ? "↗" : "↙";
+    return P.calls.map((c, i) => `<button class="call" data-dial="${esc(c.name)}">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></button>`).join("");
+  }
+  function phoneApp() {
     const el = h(`<section class="screen white">
       <div class="navbar"><span class="pill">편집</span><span class="seg"><span class="on">모두</span><span>부재중 전화</span></span><span class="pill round">${ic.menu}</span></div>
       <div class="scroll">
         <div class="bigtitle">최근 통화</div>
         <div class="searchfield">${ic.search}<span>검색</span><span class="mic">${ic.mic}</span></div>
-        ${P.calls.map(c => `<div class="call">${av(c.name)}<div class="info"><div style="min-width:0"><div class="nm ${c.missed ? "red" : ""}">${esc(c.name)}${c.count ? ` (${c.count})` : ""}</div><div class="sub">${arrow(c.dir)} ${esc(c.kind)}</div></div><span class="when">${esc(c.when)}</span><span class="ibtn">i</span></div></div>`).join("")}
+        <div data-calls>${callsHTML()}</div>
         <div style="height:20px"></div>
       </div>
       <nav class="tabbar">
@@ -173,6 +176,7 @@
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="6.5" cy="12" r="4"/><circle cx="17.5" cy="12" r="4"/><path d="M6.5 16h11"/></svg>음성 사서함</div>
       </nav>
     </section>`);
+    el.addEventListener("click", e => { const r = e.target.closest("[data-dial]"); if (r && !e.target.closest(".ibtn")) outgoingCall(r.dataset.dial); });
     return el;
   }
 
@@ -838,6 +842,7 @@
     if (last && last.name === name && !!last.missed === !!missed && last.dir === "in" && last.when === P.time) last.count = (last.count || 1) + 1;
     else P.calls.unshift({ name, kind: "휴대전화", dir: "in", missed: !!missed, when: P.time });
     if (missed) { P.badges.phone = (P.badges.phone || 0) + 1; document.querySelectorAll('[data-badge="phone"]').forEach(b => b.textContent = P.badges.phone); }
+    refreshCalls();
   }
   const CI = {
     mute: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff" stroke="none"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16"/></svg>`,
@@ -897,16 +902,85 @@
       const lineEl = callEl.querySelector("[data-line]"), timers = [];
       const endCall = () => { timers.forEach(clearTimeout); clearInterval(callTimer); lineEl.classList.remove("show"); logCall(name, false); tEl.textContent = "통화 종료"; setTimeout(closeCall, 900); };
       callEl.querySelector("[data-end]").onclick = endCall;
-      // 상대방 대사: 차례대로 보여주고 마지막 대사 뒤에 전화가 끊김
-      let at = C.lineStart ?? 1000;
-      (C.lines || []).forEach(l => {
-        timers.push(setTimeout(() => { lineEl.textContent = l.text; lineEl.classList.add("show"); }, at));
-        at += l.ms || 1800;
-        timers.push(setTimeout(() => lineEl.classList.remove("show"), at - 250));
-      });
-      if ((C.lines || []).length) timers.push(setTimeout(endCall, at + (C.hangUpAfter ?? 300)));
+      // 상대방 대사: 차례대로 보여주고 마지막 대사가 사라진 뒤 전화가 끊김
+      runLines(C.lines || [], lineEl, timers, { start: C.lineStart, hangUp: C.hangUpAfter, name }, endCall);
     }
   }
+  /* 통화 대사 재생: start(ms) 뒤 첫 대사 → 각 대사 ms 동안 표시 → 마지막 대사가 사라지고 hangUp(ms) 뒤 onEnd */
+  function runLines(lines, lineEl, timers, o, onEnd) {
+    if (!lines.length) return;
+    const showWho = lines.some(l => l.who === "me");
+    let at = o.start ?? 1100;
+    lines.forEach(l => {
+      timers.push(setTimeout(() => {
+        lineEl.innerHTML = `${showWho ? `<small>${l.who === "me" ? "차주한" : esc(o.name)}</small>` : ""}${esc(l.text)}`;
+        lineEl.classList.toggle("me", l.who === "me");
+        lineEl.classList.add("show");
+      }, at));
+      at += l.ms || 2800;
+      timers.push(setTimeout(() => lineEl.classList.remove("show"), at));
+    });
+    timers.push(setTimeout(onEnd, at + (o.hangUp ?? 900)));
+  }
+  /* ================= 거는 전화 (통화 기록에서 누르면) ================= */
+  let ringbackTimer = null;
+  function ringbackOnce() {
+    try {
+      if (!audioCtx) return;
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const at = audioCtx.currentTime;
+      [440, 480].forEach(f => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.value = f; g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.06, at + .03); g.gain.setValueAtTime(.06, at + 1); g.gain.linearRampToValueAtTime(0, at + 1.05);
+        o.connect(g).connect(audioCtx.destination); o.start(at); o.stop(at + 1.1);
+      });
+    } catch (e) {}
+  }
+  function outgoingCall(name) {
+    if (callEl) return;
+    const S = P.callScripts || {}, script = S[name] || S["기본"] || { lines: [] };
+    const rate = script.answer ?? S.answerRate ?? 0.8;
+    const answered = Math.random() < rate;
+    hideBanner();
+    callEl = h(`<div class="callui live dialing">
+      <div class="cu-liveview">
+        <div class="cu-name">${esc(name)}</div><div class="cu-sub"><span class="cu-sim">기본</span><span data-ctime>호출 중...</span></div>
+        <div class="cu-line" data-line></div>
+        <div class="cu-grid">${[["mute", "소리 끔"], ["keypad", "키패드"], ["audio", "오디오"], ["add", "통화 추가"], ["facetime", "FaceTime"], ["contact", "연락처"]].map(([k, l]) => `<button class="cu-key" data-key="${k}"><i>${CI[k]}</i><small>${l}</small></button>`).join("")}</div>
+        <button class="cu-end" data-end>${CI.hang}</button>
+      </div>
+    </div>`);
+    $("#device").appendChild(callEl);
+    $("#device").classList.add("in-call");
+    requestAnimationFrame(() => requestAnimationFrame(() => callEl.classList.add("in")));
+    const tEl = callEl.querySelector("[data-ctime]"), lineEl = callEl.querySelector("[data-line]"), timers = [];
+    callEl.querySelectorAll('[data-key="mute"],[data-key="audio"]').forEach(k => k.onclick = () => k.classList.toggle("on"));
+    ringbackOnce(); ringbackTimer = setInterval(ringbackOnce, 3000);
+    let done = false;
+    const finish = label => {
+      if (done) return; done = true;
+      timers.forEach(clearTimeout); clearInterval(ringbackTimer); clearInterval(callTimer); lineEl.classList.remove("show");
+      logOutgoing(name); tEl.textContent = label; setTimeout(closeCall, 900);
+    };
+    callEl.querySelector("[data-end]").onclick = () => finish(callEl.classList.contains("dialing") ? "통화 취소" : "통화 종료");
+    const waitMs = answered ? 3000 + Math.random() * 3000 : 9000;
+    timers.push(setTimeout(() => {
+      clearInterval(ringbackTimer);
+      if (!answered) { finish("응답 없음"); return; }
+      callEl.classList.remove("dialing");
+      const t0 = Date.now();
+      const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); tEl.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
+      draw(); callTimer = setInterval(draw, 1000);
+      runLines(script.lines || [], lineEl, timers, { start: script.lineStart, hangUp: script.hangUpAfter, name }, () => finish("통화 종료"));
+    }, waitMs));
+  }
+  function logOutgoing(name) {
+    const last = P.calls[0];
+    if (last && last.name === name && last.dir === "out" && !last.missed && last.when === P.time) last.count = (last.count || 1) + 1;
+    else P.calls.unshift({ name, kind: (P.calls.find(c => c.name === name) || {}).kind || "휴대전화", dir: "out", when: P.time });
+    refreshCalls();
+  }
+  function refreshCalls() { document.querySelectorAll("[data-calls]").forEach(box => box.innerHTML = callsHTML()); }
   function closeCall() {
     if (!callEl) return;
     const el = callEl; callEl = null;
@@ -927,7 +1001,7 @@
     if (lockEl) lockEl.querySelector("[data-ltime]").textContent = (() => { const [a, b] = P.time.split(":"); return `${+a > 12 ? +a - 12 : +a}:${b}`; })();
     if (!layer.classList.contains("open") || locked) return;
     const C = P.incomingCall;
-    if (C && C.from && !callFired && clockStart && t - START_SEC >= (C.afterMinutes ?? 5) * 60) { callFired = true; incomingCall(); }
+    if (C && C.from && !callFired && !callEl && clockStart && t - START_SEC >= (C.afterMinutes ?? 5) * 60) { callFired = true; incomingCall(); }
     const today = P.today;
     ((P.calendar && P.calendar.events) || []).forEach(e => {
       const id = e.date + e.start + e.title;

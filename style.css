@@ -559,3 +559,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 .cu-line{position:absolute;top:255px;left:24px;right:24px;text-align:center;font-size:24px;font-weight:500;line-height:1.4;color:#fff;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;text-shadow:0 1px 8px rgba(0,0,0,.35);word-break:keep-all}
 .cu-line.show{opacity:1;transform:none}
+
+.call{width:100%;text-align:left;color:inherit}
+.call:active{background:#f2f2f7}
+.cu-line small{display:block;font-size:13px;font-weight:600;opacity:.6;margin-bottom:2px;letter-spacing:.02em}
+.cu-line.me{color:#d9e6ff}
+.callui.dialing .cu-sub span:last-child{animation:dialblink 1.4s ease-in-out infinite}
+@keyframes dialblink{50%{opacity:.45}}
+.cu-liveview .cu-grid{margin-top:182px}
+.cu-line{top:214px;font-size:21px;line-height:1.45;left:28px;right:28px}
