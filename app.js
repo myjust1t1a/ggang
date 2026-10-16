@@ -839,38 +839,67 @@
     else P.calls.unshift({ name, kind: "휴대전화", dir: "in", missed: !!missed, when: P.time });
     if (missed) { P.badges.phone = (P.badges.phone || 0) + 1; document.querySelectorAll('[data-badge="phone"]').forEach(b => b.textContent = P.badges.phone); }
   }
+  const CI = {
+    mute: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff" stroke="none"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16"/></svg>`,
+    keypad: `<svg viewBox="0 0 24 24" fill="#fff">${[5, 12, 19].flatMap(y => [5, 12, 19].map(x => `<circle cx="${x}" cy="${y}" r="2.2"/>`)).join("")}<circle cx="12" cy="24.5" r="0"/></svg>`,
+    audio: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#fff" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>`,
+    add: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+    facetime: `<svg viewBox="0 0 24 24" fill="#fff"><rect x="2.5" y="6.5" width="13" height="11" rx="2.5"/><path d="M16.5 10.5l5-3v9l-5-3z"/></svg>`,
+    contact: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3.2"/><path d="M6.5 18.2c1.4-2.1 3.3-3.1 5.5-3.1s4.1 1 5.5 3.1"/></svg>`,
+    hang: `<svg viewBox="0 0 24 24"><path d="M3 14.8c5-4.4 13-4.4 18 0l-2 2.3c-.5.5-1.2.6-1.8.2l-2-1.4c-.4-.3-.6-.7-.6-1.2v-1.6c-2.1-.6-4.3-.6-6.4 0v1.6c0 .5-.2.9-.6 1.2l-2 1.4c-.6.4-1.3.3-1.8-.2z" fill="#fff"/></svg>`,
+    phone: `<svg viewBox="0 0 24 24"><path d="M6.6 3.4c.8-.5 1.8-.3 2.3.5l1.7 2.7c.5.8.3 1.7-.4 2.3l-1.3 1c.9 2.2 2.6 4.1 4.8 5.2l1-1.2c.6-.7 1.6-.8 2.3-.3l2.6 1.8c.8.5.9 1.6.4 2.4l-.9 1.2c-.9 1.2-2.5 1.6-3.9 1.1C10.4 18.6 6.1 14.3 4.3 9.3c-.5-1.4-.1-3 1.1-3.9z" fill="#34c759"/></svg>`,
+    later: `<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4.3h-3" stroke="#3f4a3f" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M4 6.5l3-2.6M20 6.5l-3-2.6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+    msg: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 4C6.8 4 3 7.3 3 11.2c0 2.2 1.2 4.2 3.2 5.5-.2 1.3-.9 2.5-1.9 3.3 2 .1 3.8-.6 5.1-1.7.8.2 1.7.3 2.6.3 5.2 0 9-3.3 9-7.4S17.2 4 12 4z"/></svg>`
+  };
   function incomingCall() {
     const C = P.incomingCall || {};
     const name = C.from || "강민재";
     hideBanner();
     callEl = h(`<div class="callui">
-      <div class="cu-top">${av(name, "cu-av")}<div class="cu-name">${esc(name)}</div><div class="cu-sub" data-csub>휴대전화</div></div>
-      <div class="cu-ring">
-        <div class="cu-small"><span><i>⏰</i>리마인더</span><span><i>💬</i>메시지</span></div>
-        <div class="cu-actions"><button class="cu-btn red" data-decline><svg viewBox="0 0 24 24"><path d="M3 15.5c5-4.6 13-4.6 18 0l-2.3 2.6c-.5.5-1.3.6-1.9.2l-2-1.5c-.4-.3-.6-.8-.6-1.3v-1.7c-2.1-.6-4.3-.6-6.4 0v1.7c0 .5-.2 1-.6 1.3l-2 1.5c-.6.4-1.4.3-1.9-.2z" fill="#fff"/></svg><span>거절</span></button><button class="cu-btn green" data-answer><svg viewBox="0 0 24 24"><path d="M6.6 3.4c.8-.5 1.8-.3 2.3.5l1.7 2.7c.5.8.3 1.7-.4 2.3l-1.3 1c.9 2.2 2.6 4.1 4.8 5.2l1-1.2c.6-.7 1.6-.8 2.3-.3l2.6 1.8c.8.5.9 1.6.4 2.4l-.9 1.2c-.9 1.2-2.5 1.6-3.9 1.1C10.4 18.6 6.1 14.3 4.3 9.3c-.5-1.4-.1-3 1.1-3.9z" fill="#fff"/></svg><span>응답</span></button></div>
+      <div class="cu-ringview">
+        <div class="cu-name">${esc(name)}</div><div class="cu-sub">휴대전화</div>
+        <div class="cu-small"><button data-decline><i>${CI.later}</i>나중에 보기</button><button data-decline><i>${CI.msg}</i>메시지</button></div>
+        <div class="cu-slider" data-slider><div class="cu-track-text">밀어서 통화하기</div><div class="cu-knob" data-knob>${CI.phone}</div></div>
       </div>
-      <div class="cu-live">
-        <div class="cu-grid">${[["🔇", "소리 끔"], ["⌗", "키패드"], ["🔊", "스피커"], ["＋", "통화 추가"], ["📹", "FaceTime"], ["👤", "연락처"]].map(([i, l]) => `<span class="cu-key"><i>${i}</i><small>${l}</small></span>`).join("")}</div>
-        <button class="cu-btn red end" data-end><svg viewBox="0 0 24 24"><path d="M3 15.5c5-4.6 13-4.6 18 0l-2.3 2.6c-.5.5-1.3.6-1.9.2l-2-1.5c-.4-.3-.6-.8-.6-1.3v-1.7c-2.1-.6-4.3-.6-6.4 0v1.7c0 .5-.2 1-.6 1.3l-2 1.5c-.6.4-1.4.3-1.9-.2z" fill="#fff"/></svg></button>
+      <div class="cu-liveview">
+        <div class="cu-name">${esc(name)}</div><div class="cu-sub"><span class="cu-sim">기본</span><span data-ctime>00:00</span></div>
+        <div class="cu-grid">${[["mute", "소리 끔"], ["keypad", "키패드"], ["audio", "오디오"], ["add", "통화 추가"], ["facetime", "FaceTime"], ["contact", "연락처"]].map(([k, l]) => `<button class="cu-key" data-key="${k}"><i>${CI[k]}</i><small>${l}</small></button>`).join("")}</div>
+        <button class="cu-end" data-end>${CI.hang}</button>
       </div>
     </div>`);
     $("#device").appendChild(callEl);
+    $("#device").classList.add("in-call");
     requestAnimationFrame(() => requestAnimationFrame(() => callEl.classList.add("in")));
     ringOnce(); ringTimer = setInterval(ringOnce, 2600);
     const missTimer = setTimeout(() => { if (callEl && !callEl.classList.contains("live")) { stopRing(); logCall(name, true); closeCall(); } }, (C.ringSeconds || 30) * 1000);
-    callEl.querySelector("[data-decline]").onclick = () => { clearTimeout(missTimer); stopRing(); logCall(name, true); closeCall(); };
-    callEl.querySelector("[data-answer]").onclick = () => {
+    callEl.querySelectorAll("[data-decline]").forEach(b => b.onclick = () => { clearTimeout(missTimer); stopRing(); logCall(name, true); closeCall(); });
+    // 밀어서 통화하기
+    const slider = callEl.querySelector("[data-slider]"), knob = callEl.querySelector("[data-knob]");
+    let sx = null, max = 0;
+    knob.addEventListener("pointerdown", e => { sx = e.clientX; max = slider.clientWidth - knob.offsetWidth - 12; knob.setPointerCapture(e.pointerId); knob.style.transition = "none"; e.stopPropagation(); });
+    knob.addEventListener("pointermove", e => { if (sx === null) return; const dx = Math.max(0, Math.min(max, e.clientX - sx)); knob.style.transform = `translateX(${dx}px)`; slider.style.setProperty("--fade", 1 - dx / max); });
+    const release = e => {
+      if (sx === null) return;
+      const dx = Math.max(0, Math.min(max, e.clientX - sx)); sx = null; knob.style.transition = "";
+      if (dx > max * .7) { knob.style.transform = `translateX(${max}px)`; answer(); }
+      else { knob.style.transform = ""; slider.style.setProperty("--fade", 1); }
+      e.stopPropagation();
+    };
+    knob.addEventListener("pointerup", release); knob.addEventListener("pointercancel", release);
+    function answer() {
       clearTimeout(missTimer); stopRing();
       callEl.classList.add("live");
-      const sub = callEl.querySelector("[data-csub]"), t0 = Date.now();
-      const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); sub.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
+      const tEl = callEl.querySelector("[data-ctime]"), t0 = Date.now();
+      const draw = () => { const sec = Math.floor((Date.now() - t0) / 1000); tEl.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; };
       draw(); callTimer = setInterval(draw, 1000);
-      callEl.querySelector("[data-end]").onclick = () => { clearInterval(callTimer); logCall(name, false); sub.textContent = "통화 종료"; setTimeout(closeCall, 700); };
-    };
+      callEl.querySelectorAll('[data-key="mute"],[data-key="audio"]').forEach(k => k.onclick = () => k.classList.toggle("on"));
+      callEl.querySelector("[data-end]").onclick = () => { clearInterval(callTimer); logCall(name, false); tEl.textContent = "통화 종료"; setTimeout(closeCall, 700); };
+    }
   }
   function closeCall() {
     if (!callEl) return;
     const el = callEl; callEl = null;
+    $("#device").classList.remove("in-call");
     el.classList.remove("in"); setTimeout(() => el.remove(), 400);
   }
 
@@ -984,7 +1013,7 @@
     else syncHistory(n + 1);
   }
   function hidePhone() {
-    if (callEl) { const live = callEl.classList.contains("live"); stopRing(); clearInterval(callTimer); callEl.remove(); callEl = null; logCall((P.incomingCall || {}).from || "강민재", !live); }
+    if (callEl) { const live = callEl.classList.contains("live"); stopRing(); clearInterval(callTimer); callEl.remove(); callEl = null; $("#device").classList.remove("in-call"); logCall((P.incomingCall || {}).from || "강민재", !live); }
     stack.forEach(sc => sc._cleanup && sc._cleanup());
     layer.classList.remove("open"); layer.setAttribute("aria-hidden", "true");
     document.body.style.overflow = ""; hideBanner();
