@@ -332,11 +332,11 @@ window.PHONE = {
       { name: "새벽경제 김도윤 기자", preview: "카톡 확인하시면 회신 부탁드립니다.", when: "09:40", unread: 3 },
       { name: "데일리저널 송하린 기자", preview: "편하실 때 연락 주세요!", when: "09:05", unread: 2 },
       { name: "국정원", preview: "지난번에 맡긴거 다 했어요.", when: "08:30", unread: 1 },
-      { name: "양동진", preview: "고마워.", when: "어제" },
       { name: "아버지", preview: "그래. 너도 밥 잘 챙겨 먹어라.", when: "어제" },
       { name: "카카오페이", preview: "차주한님, 10월 결제 리포트가 도착했어요 📊", when: "어제", unread: 1, channel: true },
       { name: "강민재", preview: "응.", when: "10월 16일" },
-      { name: "카카오톡 선물하기", preview: "가을 시즌 선물 기획전 최대 40% 할인 🎁", when: "10월 16일", unread: 1, channel: true }
+      { name: "카카오톡 선물하기", preview: "가을 시즌 선물 기획전 최대 40% 할인 🎁", when: "10월 16일", unread: 1, channel: true },
+      { name: "양동진", preview: "너 다음 주 소리만 세 번째다 ㅋㅋㅋ", when: "10월 3일" }
     ],
     /* 카카오톡을 열고 조금 뒤 위에서 내려오는 알림 (비우면 안 뜸) */
     /* 대화방에서 이 말을 보내면 돌아오는 답장 (마침표·띄어쓰기는 무시) */
@@ -367,13 +367,7 @@ window.PHONE = {
         { date: "2026년 10월 3일 토요일" },
         { text: "요즘 얼굴 보기 힘드네. 언제 술 한잔하자", time: "18:02" },
         { me: true, text: "다음 주에.", time: "18:30" },
-        { text: "너 다음 주 소리만 세 번째다 ㅋㅋㅋ", time: "18:30" },
-        { date: "2026년 10월 17일 토요일" },
-        { text: "기사 봤다", time: "22:03" },
-        { text: "괜찮냐?", time: "22:03" },
-        { me: true, text: "괜찮아.", time: "22:08" },
-        { text: "필요하면 말해라. 언제든", time: "22:09" },
-        { me: true, text: "고마워.", time: "22:10" }
+        { text: "너 다음 주 소리만 세 번째다 ㅋㅋㅋ", time: "18:30" }
       ],
       "어머니": [
         { date: "2026년 5월 7일 목요일" },
