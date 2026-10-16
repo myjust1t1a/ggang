@@ -571,3 +571,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* 알림 배너: 상태바(시간·와이파이·배터리) 아래에 뜨도록 */
 .banner{top:54px;transform:translateY(calc(-100% - 70px))}
 .banner.show{transform:none}
+
+/* 앱 열기/닫기 애니메이션 중에는 무거운 흐림 효과를 잠시 꺼서 끊김 방지 */
+.device.anim .dock,.device.anim .spot,.device.anim .widget,.device.anim .lk-btn,.device.anim .ph-tab .seg2{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.device.anim .dock{background:rgba(60,60,66,.82)}
+.device.anim .widget{background:rgba(70,70,76,.8)}
+.device.anim .screen{will-change:transform,opacity}
+.screen{backface-visibility:hidden;-webkit-backface-visibility:hidden}

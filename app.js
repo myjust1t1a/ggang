@@ -65,14 +65,40 @@
     statusbar.classList.toggle("light", dark);
     homebar.classList.toggle("light", dark);
   }
+  /* 아이폰처럼 아이콘에서 커지고, 아이콘으로 줄어드는 앱 열기/닫기 */
+  const EASE = "cubic-bezier(.32,.72,0,1)";
+  const canAnimate = typeof Element !== "undefined" && "animate" in Element.prototype;
+  function iconTransform(r) {
+    const d = screens.getBoundingClientRect();
+    const sx = r.width / d.width, sy = r.height / d.height;
+    const tx = r.left - d.left + r.width / 2 - d.width / 2, ty = r.top - d.top + r.height / 2 - d.height / 2;
+    return `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`;
+  }
+  function withAnim(ms) { const dev = $("#device"); dev.classList.add("anim"); clearTimeout(withAnim.t); withAnim.t = setTimeout(() => dev.classList.remove("anim"), ms + 40); }
+  function zoomOpen(el, iconEl, home) {
+    const from = iconTransform(iconEl.getBoundingClientRect());
+    withAnim(520);
+    el.style.borderRadius = "48px";
+    el.animate([{ transform: from }, { transform: "none" }], { duration: 520, easing: EASE });
+    el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: "linear" });
+    if (home) home.animate([{ transform: "scale(1)", opacity: 1 }, { transform: "scale(.92)", opacity: .6 }], { duration: 520, easing: EASE });
+    setTimeout(() => { el.style.borderRadius = ""; }, 520);
+  }
+  function zoomClose(el, iconEl, home) {
+    const to = iconTransform(iconEl.getBoundingClientRect());
+    withAnim(460);
+    el.style.borderRadius = "48px";
+    el.animate([{ transform: "none" }, { transform: to }], { duration: 460, easing: EASE, fill: "forwards" });
+    el.animate([{ opacity: 1 }, { opacity: 1, offset: .45 }, { opacity: 0 }], { duration: 460, easing: "linear", fill: "forwards" });
+    if (home) home.animate([{ transform: "scale(.92)", opacity: .6 }, { transform: "scale(1)", opacity: 1 }], { duration: 460, easing: EASE });
+  }
+  function homeIcon(appId) { return appId && stack[0] ? stack[0].querySelector(`.app[data-app="${appId}"] .ic`) : null; }
   function show(el, mode, originEl) {
     const prev = stack[stack.length - 1];
     screens.appendChild(el);
-    if (mode === "app" && originEl) {
-      const r = originEl.getBoundingClientRect(), d = screens.getBoundingClientRect();
-      el.style.transformOrigin = `${r.left + r.width / 2 - d.left}px ${r.top + r.height / 2 - d.top}px`;
-    }
-    el.classList.add(mode === "app" ? "app-enter" : "push-enter");
+    const zoom = mode === "app" && originEl && canAnimate;
+    if (zoom) { el.dataset.fromApp = (originEl.closest("[data-app]") || {}).dataset?.app || ""; zoomOpen(el, originEl, prev); }
+    else el.classList.add(mode === "app" ? "app-enter" : "push-enter");
     stack.push(el); setChrome(el);
     if (mode !== "none") { try { history.pushState({ d: stack.length - 1 }, "", "#phone"); } catch (e) {} }
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -88,11 +114,15 @@
     if (stack.length - 1 <= depth) return;
     const removed = stack.splice(depth + 1), prev = stack[depth];
     prev.classList.remove("under"); setChrome(prev); hideBanner();
+    const icon = animateHome && depth === 0 && canAnimate ? homeIcon(removed[0].dataset.fromApp) : null;
     removed.forEach((t, i) => {
-      if (i === removed.length - 1) t.classList.add(animateHome && depth === 0 && removed.length > 0 ? "app-enter" : "push-enter");
+      if (i === removed.length - 1) {
+        if (icon) zoomClose(t, icon, prev);
+        else t.classList.add(animateHome && depth === 0 ? "app-enter" : "push-enter");
+      }
       else t.style.opacity = 0;
       if (t._cleanup) t._cleanup();
-      setTimeout(() => t.remove(), 420);
+      setTimeout(() => t.remove(), icon ? 470 : 420);
     });
   }
   function back() { if (stack.length <= 1) return; popTo(stack.length - 2); syncHistory(1); }
