@@ -21,7 +21,7 @@
     photos: `<svg viewBox="0 0 60 60"><defs><linearGradient id="phs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc8ff"/><stop offset="1" stop-color="#ffd7a8"/></linearGradient></defs><rect width="60" height="60" fill="#fff"/><rect x="9" y="12" width="42" height="36" rx="7" fill="url(#phs)"/><circle cx="40" cy="22" r="4.5" fill="#fff6c9"/><path d="M9 42l12-13 9 9 6-6 15 13v3a7 7 0 0 1-7 7H16a7 7 0 0 1-7-7z" fill="#3fa36b"/><path d="M27 48l9-16 15 16z" fill="#2d7d52"/></svg>`,
     camera: `<svg viewBox="0 0 60 60"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9e9eb"/><stop offset="1" stop-color="#c8c8cc"/></linearGradient><radialGradient id="cl" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#8fa6d8"/><stop offset=".18" stop-color="#2a3560"/><stop offset=".6" stop-color="#0a0d18"/><stop offset="1" stop-color="#000"/></radialGradient><radialGradient id="cr" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#2b2b2e"/><stop offset=".9" stop-color="#5b5b60"/><stop offset="1" stop-color="#9a9aa0"/></radialGradient></defs><rect width="60" height="60" fill="url(#cg)"/><circle cx="30" cy="30" r="22" fill="url(#cr)"/><circle cx="30" cy="30" r="17" fill="url(#cl)"/><ellipse cx="25.5" cy="24.5" rx="4" ry="3" fill="#fff" opacity=".75"/><circle cx="34" cy="35" r="1.6" fill="#9fb4ff" opacity=".5"/></svg>`,
     clock: (() => { const [hh, mm] = (P.time || "10:10").split(":").map(Number); const ha = ((hh % 12) + mm / 60) * 30, ma = mm * 6;
-      return `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/>${[...Array(60)].map((_, i) => i % 15 === 0 ? "" : `<line x1="30" y1="5" x2="30" y2="${i % 5 ? 7.5 : 9.5}" stroke="${i % 5 ? "#9a9a9e" : "#3a3a3c"}" stroke-width="${i % 5 ? .6 : 1.4}" transform="rotate(${i * 6} 30 30)"/>`).join("")}<g font-size="9" font-weight="600" fill="#3a3a3c" text-anchor="middle"><text x="30" y="14">12</text><text x="49" y="33.2">3</text><text x="30" y="52.5">6</text><text x="11" y="33.2">9</text></g><line x1="30" y1="30" x2="30" y2="17" stroke="#111" stroke-width="2.8" stroke-linecap="round" transform="rotate(${ha} 30 30)"/><line x1="30" y1="30" x2="30" y2="10.5" stroke="#111" stroke-width="2.2" stroke-linecap="round" transform="rotate(${ma} 30 30)"/><g class="ic-sec"><line x1="30" y1="35" x2="30" y2="8.5" stroke="#f5a623" stroke-width="1"/></g><circle cx="30" cy="30" r="2" fill="#111"/><circle cx="30" cy="30" r="1" fill="#f5a623"/></svg>`; })(),
+      return `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/>${[...Array(60)].map((_, i) => i % 15 === 0 ? "" : `<line x1="30" y1="5" x2="30" y2="${i % 5 ? 7.5 : 9.5}" stroke="${i % 5 ? "#9a9a9e" : "#3a3a3c"}" stroke-width="${i % 5 ? .6 : 1.4}" transform="rotate(${i * 6} 30 30)"/>`).join("")}<g font-size="9" font-weight="600" fill="#3a3a3c" text-anchor="middle"><text x="30" y="14">12</text><text x="49" y="33.2">3</text><text x="30" y="52.5">6</text><text x="11" y="33.2">9</text></g><line x1="30" y1="30" x2="30" y2="17" stroke="#111" stroke-width="2.8" stroke-linecap="round" class="ic-h" transform="rotate(${ha} 30 30)"/><line x1="30" y1="30" x2="30" y2="10.5" stroke="#111" stroke-width="2.2" stroke-linecap="round" class="ic-m" transform="rotate(${ma} 30 30)"/><g class="ic-sec" transform="rotate(0 30 30)"><line x1="30" y1="35" x2="30" y2="8.5" stroke="#f5a623" stroke-width="1"/></g><circle cx="30" cy="30" r="2" fill="#111"/><circle cx="30" cy="30" r="1" fill="#f5a623"/></svg>`; })(),
     notes: `<svg viewBox="0 0 60 60"><defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdf5e"/><stop offset="1" stop-color="#f7c843"/></linearGradient><linearGradient id="nb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f1f1f3"/></linearGradient></defs><rect width="60" height="60" fill="url(#nb)"/><rect width="60" height="20" fill="url(#nt)"/>${[...Array(15)].map((_, i) => `<circle cx="${4 + i * 3.7}" cy="23" r=".7" fill="#c7c7cc"/>`).join("")}<line x1="11" y1="34" x2="49" y2="34" stroke="#c7c7cc" stroke-width="1.6" stroke-linecap="round"/><line x1="11" y1="46" x2="49" y2="46" stroke="#c7c7cc" stroke-width="1.6" stroke-linecap="round"/></svg>`,
     mail: `<svg viewBox="0 0 60 60"><defs><linearGradient id="ml" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e90ff"/><stop offset="1" stop-color="#0a5fd8"/></linearGradient></defs><rect width="60" height="60" fill="url(#ml)"/><rect x="11" y="18" width="38" height="25" rx="3.5" fill="#fff"/><path d="M12 20l18 13 18-13" fill="none" stroke="#9cc3f5" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
     translate: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#f1f3f7"/><rect x="8" y="10" width="28" height="30" rx="4" fill="#4a86f0"/><text x="22" y="32" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">가</text><rect x="25" y="22" width="27" height="28" rx="4" fill="#fff" stroke="#c9d3e6"/><text x="38.5" y="42" text-anchor="middle" font-size="15" fill="#555">文</text></svg>`,
@@ -394,10 +394,10 @@
   }
   const banner = $("#banner"); let bannerTimer;
   function showBanner(N) {
-    banner.innerHTML = `<div class="bi"></div><div class="bt"><small>${esc(N.app)}</small><b>${esc(N.from)}</b>${esc(N.text)}</div><time>지금</time>`;
+    banner.innerHTML = `<div class="bi${N.kind === "calendar" ? " cal" : ""}">${N.kind === "calendar" ? I.calendar : ""}</div><div class="bt"><small>${esc(N.app)}</small><b>${esc(N.from)}</b>${esc(N.text)}</div><time>지금</time>`;
     banner.hidden = false;
     requestAnimationFrame(() => requestAnimationFrame(() => banner.classList.add("show")));
-    clearTimeout(bannerTimer); bannerTimer = setTimeout(hideBanner, 5000);
+    clearTimeout(bannerTimer); bannerTimer = setTimeout(hideBanner, N.duration || 5000);
   }
   function hideBanner() { banner.classList.remove("show"); }
   banner.onclick = hideBanner;
@@ -746,10 +746,56 @@
 
   const OPEN = { calendar: calendarApp, camera: cameraApp, clock: clockApp, phone: phoneApp, chrome: chromeApp, messages: messagesApp, kakao: kakaoApp, notes: notesApp, translate: translateApp, photos: photosApp };
 
+
+  /* ================= 흐르는 시계 · 캘린더 알림 ================= */
+  const START_SEC = (() => { const [hh, mm] = (P.time || "11:58").split(":").map(Number); return hh * 3600 + mm * 60; })();
+  let clockStart = null, audioCtx = null;
+  const alerted = new Set();
+  const phoneSec = () => START_SEC + (clockStart ? Math.floor((Date.now() - clockStart) / 1000) : 0);
+  function chime() {
+    try {
+      if (!audioCtx) return;
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      [0, .22, .44, 1.2, 1.42, 1.64].forEach((t, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain(), at = audioCtx.currentTime + t;
+        o.type = "sine"; o.frequency.value = i % 3 === 2 ? 1318.5 : i % 3 === 1 ? 1046.5 : 880;
+        g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.18, at + .02); g.gain.exponentialRampToValueAtTime(.001, at + .4);
+        o.connect(g).connect(audioCtx.destination); o.start(at); o.stop(at + .45);
+      });
+    } catch (e) {}
+    try { navigator.vibrate && navigator.vibrate([250, 120, 250]); } catch (e) {}
+  }
+  function tick() {
+    const t = phoneSec(), hh = Math.floor(t / 3600) % 24, mm = Math.floor(t / 60) % 60, ss = t % 60;
+    const str = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+    if (str !== P.time) P.time = str;
+    $("#sbTime").textContent = P.time;
+    const ha = ((hh % 12) + mm / 60) * 30, ma = mm * 6, sa = ss * 6;
+    document.querySelectorAll(".ic-h").forEach(n => n.setAttribute("transform", `rotate(${ha} 30 30)`));
+    document.querySelectorAll(".ic-m").forEach(n => n.setAttribute("transform", `rotate(${ma} 30 30)`));
+    document.querySelectorAll(".ic-sec").forEach(n => n.setAttribute("transform", `rotate(${sa} 30 30)`));
+    // 오늘 일정 중 alert: true 인 것이 시작 시각이 되면 알림
+    if (!layer.classList.contains("open")) return;
+    const today = P.today;
+    ((P.calendar && P.calendar.events) || []).forEach(e => {
+      const id = e.date + e.start + e.title;
+      if (e.alert && e.date === today && e.start && e.start <= P.time && !alerted.has(id)) {
+        alerted.add(id);
+        const [eh, em] = e.start.split(":").map(Number);
+        const when = `${eh < 12 ? "오전" : "오후"} ${eh % 12 === 0 ? 12 : eh % 12}:${String(em).padStart(2, "0")}`;
+        showBanner({ kind: "calendar", app: "캘린더", from: e.title, text: `오늘 ${when}${e.place ? " · " + e.place : ""}`, duration: 9000 });
+        chime();
+      }
+    });
+  }
+  setInterval(tick, 1000);
+
   /* ================= 열기/닫기 ================= */
   let startedOnPhone = false;
   function openPhone() {
     if (layer.classList.contains("open")) return;
+    if (!clockStart) clockStart = Date.now();
+    try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     screens.innerHTML = ""; stack = [];
     show(homeScreen(), "none");
     stack[0].classList.remove("push-enter");
